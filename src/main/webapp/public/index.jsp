@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="models.ServiceCategory" %>
 <%@ page import="java.util.ArrayList" %>
-
+<%@ page import="models.ServiceCategory" %>
 <!DOCTYPE html>
 <html>
 <head>
