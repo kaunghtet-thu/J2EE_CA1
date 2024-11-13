@@ -4,13 +4,15 @@
 <meta charset="UTF-8">
 <title>SPOTLESS Cleaning Services</title>
 <style>
-
+    /* Header styling */
     header {
         background-color: #E3EED4;
         color: black;
         padding: 20px 0;
         text-align: center;
         position: sticky;
+        top: 0;
+        z-index: 1000;
     }
     .header-content {
         max-width: 800px;
@@ -22,13 +24,36 @@
         font-weight: bold;
         letter-spacing: 1px;
     }
-    .header-subtitle {
-        font-size: 18px;
-        margin: 5px 0;
-        color: #cce5ff;
-    }
     .header-title .highlightS {
-    	font-variant: small-caps;
+        font-variant: small-caps;
+    }
+    
+    /* Navbar styling */
+    nav {
+        display: flex;
+        justify-content: center;
+        background-color: #c5d1ba;
+        padding: 10px 0;
+        margin-top: 10px;
+    }
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+    }
+    nav ul li {
+        margin: 0 15px;
+    }
+    nav ul li a {
+        text-decoration: none;
+        color: black;
+        font-size: 16px;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+    nav ul li a:hover {
+        color: #007bff;
     }
 </style>
 </head>
@@ -37,10 +62,19 @@
 <header>
     <div class="header-content">
         <div class="header-title">
-            <span class="highlight"><i>SPOTLESS</i></span> Cleaning Services.
+            <span class="highlight"><i>SPOTLESS</i></span> Cleaning Services
         </div>
     </div>
 </header>
+
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="cart.html">Cart</a></li>
+        <li><a href="booking-history.html">Booking History</a></li>
+    </ul>
+</nav>
 
 </body>
 </html>
