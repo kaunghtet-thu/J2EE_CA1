@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="model.ServiceCategory" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.*" %>
+<%@page import="DAO.ServiceCategoryDAO"%>
 
 <!DOCTYPE html>
 <html>
@@ -78,26 +79,32 @@
 <h1>Welcome from SPOTLESS</h1>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 </p>
+<table border="1">
+	<tr>
+		<td>1. Pick a service </td>
+		<td>2. Choose date and time</td>
+		<td>3. Confirm address</td>
+		<td>4. Checkout</td>
+	</tr>
+</table>
 
 <h2>Services available</h2>
 <%
-    // Sample ArrayList containing industry names (replace with your own ArrayList)
-    ArrayList<String> categories = new ArrayList<>();
-		categories.add("F&B INDUSTRY");
-		categories.add("COSMETIC INDUSTRY");
-		categories.add("FLORAL & GIFT INDUSTRY");
-		categories.add("MODERN TRADE RETAIL INDUSTRY");
+	ServiceCategoryDAO dao = new ServiceCategoryDAO();
+    List<ServiceCategory> categories = dao.getAllServiceCategories();
+
 %>
  <div class="category">
         <%
-            for (String categotry : categories) {
+        if (!categories.isEmpty()) {
+            for (ServiceCategory categotry : categories) {
         %>
             <div class="categoryItem">
-                <span><%= categotry %></span>
+                <span><%= categotry.getName() %></span>
                 <span class="dropdown-arrow">&#9662;</span>
             </div>
         <%
-            }
+            }}
         %>
     </div>
 <%@ include file="footer.html" %>
