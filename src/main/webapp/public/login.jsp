@@ -4,30 +4,82 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Log in</title>
+<style>
+	.container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 80px; /* space to account for the header */
+        }
+
+        .login-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .login-card input[type="email"],
+        .login-card input[type="password"],
+        .login-card button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-card button {
+            background-color: #5cb85c;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .login-card button:hover {
+            background-color: #4cae4c;
+        }
+
+        .links {
+            margin-top: 10px;
+        }
+
+        .links a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+</style>
 </head>
 <body>
+<%@include file="header.jsp" %>
 <%
-	/* ================================
-	Author: Kaung Htet Thu (P2340768)
-	Class: dit/2a/23
-	Description: ST0510 Pract2 - part 3
-	================================= */
-	
-	String message = request.getParameter("errCode");
-	if(message != null && message.equals("invalidLogin")) {
-		out.print("<h1> Please try again!</h1>");
-	}
+    String message = request.getParameter("errCode");
+    if(message != null && message.equals("invalidLogin")) {
+        out.print("<h3>Email or password incorrect. Please try again!</h3><br>");        
+    } 
 %>
-	<form action="verifyUser.jsp" method="post">
-	    <label for="loginid">Login ID:</label>
-	    <input type="text" id="loginid" name="loginid"><br><br>
-	    
-	    <label for="password">Password:</label>
-	    <input type="password" id="password" name="password"><br><br>
-	    
-	    <input type="submit" name="btnSubmit" value="Login">
-	    <input type="reset" value="Reset">
-	</form>
+    <div class="container">
+        <div class="login-card">
+            <h2>Login to your account</h2>
+            <form action="verifyUser.jsp" method="post">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <div class="links">
+                <p>Don't have an account? <a href="register.jsp">Register here</a></p>OR
+                <p><a href="index.jsp">Explore without login</a></p>
+
+            </div>
+        </div>
+    </div>
+<%@ include file="footer.html" %>
 </body>
 </html>
