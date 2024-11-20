@@ -1,4 +1,4 @@
-<%@page import="model.*" %><%@page import="DAO.*" %>
+<%@page import="bean.*" %><%@page import="DAO.*" %>
 
 <!DOCTYPE html>
 <html>

@@ -1,5 +1,5 @@
 <%@ page import="java.time.LocalDate, java.time.LocalTime, java.time.LocalDateTime" %>
-<%@ page import="java.util.*, DAO.BookingDAO, model.Booking" %>
+<%@ page import="java.util.*, DAO.BookingDAO,bean.Booking" %>
 
 <%
     // Initialize DAO

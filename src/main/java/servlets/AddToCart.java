@@ -12,8 +12,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Service;
 import DAO.ServiceDAO;
+import bean.Service;
 
 /**
  * Servlet implementation class AddToCart

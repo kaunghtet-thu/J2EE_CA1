@@ -1,12 +1,12 @@
 package DAO;
 
-import model.Member;
-import model.Address;
-import model.MemberInfo;
 import java.sql.*;
 import java.util.ArrayList;
 
 import DB.DatabaseUtil;
+import bean.Address;
+import bean.Member;
+import bean.MemberInfo;
 import jakarta.servlet.http.HttpSession;
 
 public class MemberDAO {

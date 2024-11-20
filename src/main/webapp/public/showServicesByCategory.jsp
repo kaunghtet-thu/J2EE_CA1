@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.util.*" %>
-<%@ page import="model.Service" %>
+<%@ page import="bean.Service" %>
 <%@ page import="DAO.ServiceDAO" %>
 <!DOCTYPE html>
 <html lang="en">

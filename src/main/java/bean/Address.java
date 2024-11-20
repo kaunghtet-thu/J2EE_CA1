@@ -1,4 +1,4 @@
-package model;
+package bean;
 
 public class Address {
 	private int id;
