@@ -51,6 +51,7 @@
     </thead>
     <tbody>
         <%
+      
             // Loop through the services list and display each service
             for (Service service : servicesList) {
         %>
@@ -62,13 +63,13 @@
             <td>
                 <!-- Add to Cart Form -->
                 <form action="AddToCart" method="POST" style="display:inline;">
-                    <input type="hidden" name="serviceId" value="<%= service.getId() %>"/>
+                    <input type="hidden" name="serviceId" value="<%=service.getId()%>"/>
                     <input type="submit" value="Add To Cart" />
                 </form>
 
                 <!-- Book Service Form -->
                 <form action="BookService" method="POST" style="display:inline;">
-                    <input type="hidden" name="serviceId" value="<%= service.getId() %>"/>
+                    <input type="hidden" name="serviceId" value="<%=service.getId()%>"/>
                     <input type="submit" value="Book" />
                 </form>
             </td>
