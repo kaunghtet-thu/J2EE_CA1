@@ -13,7 +13,7 @@
         }
 
         .container {
-		    max-width: 30vw;
+		    max-width: 35vw;
 		    margin: auto;
 		    padding: 15px;
 		}
@@ -48,6 +48,10 @@
         button {
         	background-color:  #c5d1ba;
         }
+        input::placeholder {
+		    font-style: italic;
+		}
+		        
     </style>
 </head>
 <body>
@@ -80,33 +84,50 @@
                     updateSuccess = dao.updateMemberPhone(id, value, actorId);
                     updateMessage = updateSuccess ? "Phone updated successfully!" : "Failed to update phone.";
                     break;
-                case "address":
-                    int addressId = Integer.parseInt(request.getParameter("addressId"));
-                    updateSuccess = dao.updateMemberAddress(addressId, value);
-                    updateMessage = updateSuccess ? "Address updated successfully!" : "Failed to update address.";
-                    break;
                 case "newAddress":
-                    String newAddress = request.getParameter("newAddress");
-                    if (newAddress != null && !newAddress.isEmpty()) {
-                        updateSuccess = dao.addMemberAddress(id, newAddress);
-                        updateMessage = updateSuccess ? "New address added successfully!" : "Failed to add new address.";
-                    } else {
-                        updateMessage = "Address cannot be empty.";
-                    }
+                	updateSuccess = dao.addMemberAddress(id, value);
+                	updateMessage = updateSuccess ? "Address added successfully!" : "Failed to add address.";
                     break;
                 default:
                     updateMessage = "Invalid field specified.";
             }
         }
-
-        if ("true".equals(request.getParameter("showNewField"))) {
-            
-        } else {
-            
-        }
-
         memberInfo = dao.getMemberDetail(id); // Refresh data after update
     }
+    
+    if ("POST".equalsIgnoreCase(request.getMethod())) {
+        String field = request.getParameter("field");
+
+        if (field != null && field.equals("address")) {
+            int index = 0;  // Index to track each address
+            while (true) {
+                String addressIdParam = "addressId_" + index;
+                String valueParam = "value_" + index;
+
+                String value = request.getParameter(valueParam);
+                if (value == null) break;  // Exit loop when no more address updates are found
+
+                int addressId = Integer.parseInt(request.getParameter(addressIdParam));
+
+                // Check if it's an update or delete action
+                String deleteAddress = request.getParameter("deleteAddress");
+                if (deleteAddress != null && Integer.parseInt(deleteAddress) == addressId) {
+                    // Handle the deletion
+                    updateSuccess = dao.deleteMemberAddress(addressId);
+                    updateMessage = updateSuccess ? "Address deleted successfully!" : "Failed to delete address.";
+                } else {
+                    // Handle the update
+                    updateSuccess = dao.updateMemberAddress(addressId, value);
+                    updateMessage = updateSuccess ? "Address updated successfully!" : "Failed to update address " + (index + 1) + ".";
+                }
+
+                index++;  // Move to the next address
+            }
+        }
+        memberInfo = dao.getMemberDetail(id); // Refresh data after update or delete
+    }
+
+
 %>
 
 <div class="container">
@@ -151,29 +172,51 @@
     </fieldset>
 
     <!-- Address -->
-    <fieldset>
-        <legend>Address:</legend>
-        <form method="post" action="<%= request.getContextPath() %>/user-profile">
-            <% 
-                // Render existing addresses
-                List<Address> addresses = memberInfo.getAddress();
-                for (Address address : addresses) { 
-            %>
-                <input type="hidden" name="field" value="address">
-                <input type="hidden" name="addressId" value="<%= address.getId() %>">
-                <input type="text" name="value" value="<%= address.getAddress() %>" required>
-                <button type="submit" name="updateAddress" value="<%= address.getId() %>">Update</button>
-                <br>
-            <% 
-                }  
-                
-            %>
-              <input type="hidden" name="field" value="newAddress">
-              <input type="text" name="newAddress" placeholder="Enter new address" required>
-            <button type="submit">Add</button>
-         
-        </form>
-    </fieldset>
+   <fieldset>
+	    <legend>Address:</legend>
+	    <form method="post" class="edit-form">
+	        <% 
+	            List<Address> addresses = memberInfo.getAddress();
+	            int index = 0;  // Used to create unique names for each input
+	            for (Address address : addresses) { 
+	        %>
+	            <input type="hidden" name="field" value="address">
+	            <input type="hidden" name="addressId_<%= index %>" value="<%= address.getId() %>">
+	            <input type="text" name="value_<%= index %>" value="<%= address.getAddress() %>" required>
+	            
+	            <button type="submit" name="updateAddress" value="<%= index %>">Update</button>
+	            <button type="submit" name="deleteAddress" value="<%= address.getId() %>">Delete</button>
+	            <br>
+	        <% 
+	            index++;  // Increment index for unique field names
+	            }  
+	        %>
+	    </form>
+	
+	    <form method="post" class="edit-form">
+	        <input type="hidden" name="field" value="newAddress">
+	        <input type="text" id="newAddress" name="value" placeholder="Add a new address" required>
+	        <button type="submit">Add</button>
+	    </form>
+	</fieldset>
+	
+	<fieldset>
+	    <legend>Reset Password</legend>
+	    <form method="post" class="edit-form">
+	        <!-- Hidden field to specify the action -->
+	        <input type="hidden" name="field" value="password">
+	        <input type="password" id="oldPassword" name="oldPassword" placeholder="Enter old password" required>
+	        <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password"required>
+	        <input type="password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Confirm new password" required>
+	        
+	        <!-- Submit Button -->
+	        <button type="submit">Update</button>
+	    </form>
+	</fieldset>
+
+
+    
+
 
 </div>
 

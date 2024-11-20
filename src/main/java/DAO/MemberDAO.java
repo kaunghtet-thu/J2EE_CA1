@@ -284,8 +284,8 @@ public class MemberDAO {
 	    }
 	}
 	// Admin cannot edit the user email and password
-	public boolean updateMemberPassword (int id, String hashedNewPassword, String hashedOldPassword, int actorId) {
-		 String sql = String.format("UPDATE %s SET password = ? WHERE password = ? AND id = ? AND id = ?", this.tableName);
+	public boolean updateMemberPassword (int id, String hashedNewPassword, String hashedOldPassword) {
+		 String sql = String.format("UPDATE %s SET password = ? WHERE password = ? AND id = ?", this.tableName);
 		    
 		    try (Connection connection = DatabaseUtil.getConnection();
 		         PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -294,8 +294,6 @@ public class MemberDAO {
 		        stmt.setString(1, hashedNewPassword); 
 		        stmt.setString(2, hashedOldPassword);
 		        stmt.setInt(3, id);      
-		        stmt.setInt(4, actorId);   
-
 		        // Execute update
 		        int rowsAffected = stmt.executeUpdate();
 		        return rowsAffected > 0; 
@@ -327,6 +325,27 @@ public class MemberDAO {
 	        System.err.println("Error while updating member phone: " + e.getMessage());
 	        return false;
 	    }
+	}
+	
+	public boolean deleteMemberAddress (int addressId) {
+		 String sql = String.format("DELETE FROM %s WHERE id = ? ", this.TABLENAME2);
+
+		    try (Connection connection = DatabaseUtil.getConnection();
+		         PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+		        stmt.setInt(1, addressId);
+
+		        int rowsAffected = stmt.executeUpdate();
+
+		        // Check if a row was inserted
+		        if (rowsAffected > 0) {
+		            return true;
+		        }
+
+		    } catch (SQLException e) {
+		        System.err.println("Error while creating member: " + e.getMessage());
+		    }
+		return false;
 	}
 	
 }
