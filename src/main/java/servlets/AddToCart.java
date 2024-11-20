@@ -72,7 +72,7 @@ public class AddToCart extends HttpServlet {
         }
 
         // Check if the service is already in the cart
-        boolean alreadyInCart = cart.stream().anyMatch(item -> item.getId() == service.getId());
+        boolean alreadyInCart = cart.stream().anyMatch(item -> item.getId() == id);
         if (alreadyInCart) {
             // Redirect with a message if the item is already in the cart
             out.print("<br>This item is already in your cart.");
