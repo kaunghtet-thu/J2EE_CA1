@@ -90,7 +90,6 @@
 		<td>4. Checkout</td>
 	</tr>
 </table>
-
 <h2>Services available</h2>
 <%
 	ServiceCategoryDAO dao = new ServiceCategoryDAO();

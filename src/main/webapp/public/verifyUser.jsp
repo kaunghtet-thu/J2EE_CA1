@@ -17,12 +17,11 @@
 
 String email = request.getParameter("email");
 String password = request.getParameter("password");
-Member member;
+
 
 MemberDAO dao = new MemberDAO();
-member = dao.loginMember(email, password);
-	if (member != null) {
-		session.setAttribute("member", member);
+dao.loginMember(email, password, session);
+	if (dao.loginMember(email, password, session)) {
 		response.sendRedirect("index.jsp");
 	} else {
 		response.sendRedirect("login.jsp?errCode=invalidLogin");

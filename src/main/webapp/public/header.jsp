@@ -97,7 +97,7 @@
     <div class="profile-icon">
         <i class="fas fa-user-circle"></i>
         <% if (isMember || isAdmin || isStaff) { %>
-            <a href="#" class="iconText">Welcome <%= member.getName().toUpperCase() %></a>
+            <a href="profile.jsp" class="iconText">Welcome <%= member.getName().toUpperCase() %></a>
         <% } else { %>
             <button class="login-button" onclick="location.href='login.jsp'">Log in</button>
         <% } %>

@@ -31,7 +31,7 @@
                 isStaff = true;
                 break;
             default:
-                isPublic = true; // Fallback to public if the role doesn't match
+                isPublic = true;
                 break;
         }
     }
