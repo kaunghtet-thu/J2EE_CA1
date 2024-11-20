@@ -1,7 +1,7 @@
 package DAO;
 
-import model.Booking;
 import DB.DatabaseUtil;
+import bean.Booking;
 
 import java.sql.*;
 import java.util.ArrayList;

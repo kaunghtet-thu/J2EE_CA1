@@ -1,7 +1,7 @@
 package DAO;
 
-import model.Service;
 import DB.DatabaseUtil;
+import bean.Service;
 
 import java.sql.*;
 import java.util.ArrayList;

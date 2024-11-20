@@ -1,5 +1,5 @@
 <%@ page import="java.util.List" %>
-<%@ page import="model.Service" %>
+<%@ page import="bean.Service" %>
 <!DOCTYPE html>
 <html>
 <head>
