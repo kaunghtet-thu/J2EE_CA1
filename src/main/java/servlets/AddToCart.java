@@ -83,8 +83,6 @@ public class AddToCart extends HttpServlet {
                 out.print("<br>This item is already in your cart.");
                 return;
             }
-        
-
 
         // Add the service to the cart
         cart.add(service);

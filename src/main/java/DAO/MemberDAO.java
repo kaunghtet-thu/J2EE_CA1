@@ -51,7 +51,27 @@ public class MemberDAO {
 	    return null;
 	}
 
+	public boolean addMemberAddress (int memberId, String address) {
+		 String sql = String.format("INSERT INTO %s (member_id, address) VALUES (?, ?)", this.TABLENAME2);
 
+		    try (Connection connection = DatabaseUtil.getConnection();
+		         PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+		        stmt.setInt(1, memberId);
+		        stmt.setString(2, address);
+
+		        int rowsAffected = stmt.executeUpdate();
+
+		        // Check if a row was inserted
+		        if (rowsAffected > 0) {
+		            return true;
+		        }
+
+		    } catch (SQLException e) {
+		        System.err.println("Error while creating member: " + e.getMessage());
+		    }
+		return false;
+	}
 	
 	
 	//======================================
