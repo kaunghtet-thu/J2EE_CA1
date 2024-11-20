@@ -1,10 +1,11 @@
 <%@page import="DAO.ServiceCategoryDAO"%>
 <%@page import="bean.ServiceCategory"%>
 <%@page import="java.util.List"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+
     <title>Service Categories</title>
     <style>
         body {
@@ -44,6 +45,8 @@
     </style>
 </head>
 <body>
+	<%@include file="header.jsp" %>
+
     <div class="center">
         <h1>All Service Categories</h1>
         <!-- Form to handle the clicked row submission -->
@@ -88,5 +91,7 @@
 </form>
 
     </div>
+    <%@include file="footer.html" %>
+    
 </body>
 </html>

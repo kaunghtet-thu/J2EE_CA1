@@ -6,6 +6,8 @@
     <title>Cart</title>
 </head>
 <body>
+<%@include file="header.jsp" %>
+
     <h1>Your Cart</h1>
     
     <%
@@ -23,6 +25,7 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Price</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +36,13 @@
                     <td><%= service.getName() %></td>
                     <td><%= service.getDescription() %></td>
                     <td><%= service.getPrice() %></td>
+                    <td>
+                        <!-- Delete Form -->
+                        <form action="RemoveFromCart" method="POST" style="display:inline;">
+                            <input type="hidden" name="serviceId" value="<%= service.getId() %>">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 <%
                     }
@@ -45,5 +55,7 @@
     %>
     
     <a href="showAllServiceCategories.jsp">Continue Shopping</a>
+    <%@include file="footer.html" %>
+    
 </body>
 </html>

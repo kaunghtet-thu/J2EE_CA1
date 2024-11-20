@@ -10,6 +10,8 @@
     <title>Services Under Category</title>
 </head>
 <body>
+<%@include file="header.jsp" %>
+
 <%
     String errorMessage = (String) request.getAttribute("errorMessage");
     if (errorMessage != null) {
@@ -90,6 +92,7 @@
         out.println("<h3>No category selected!</h3>");
     }
 %>
+<%@include file="footer.html" %>
 
 </body>
 </html>
