@@ -40,6 +40,7 @@ public class ServiceDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Service(
+                		rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("description"),
                         rs.getInt("category_id"),

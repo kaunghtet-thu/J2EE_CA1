@@ -2,11 +2,13 @@ package DAO;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import DB.DatabaseUtil;
 import bean.Address;
 import bean.Member;
 import bean.MemberInfo;
+import bean.Service;
 import jakarta.servlet.http.HttpSession;
 
 public class MemberDAO {
@@ -69,6 +71,9 @@ public class MemberDAO {
                 int role_id = rs.getInt("role_id");
                 Member member = new Member(id, name, role_id);
                 setSession(session, member);
+                List<Service> cart = new ArrayList<>();
+                session.setAttribute("cart", cart);
+
             }
             
         } catch (SQLException e) {
