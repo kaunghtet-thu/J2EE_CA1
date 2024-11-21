@@ -118,7 +118,9 @@
         %>	
        
         <li><a href="#">Manage Service</a></li>
+        <li><a href="displayAllMembers.jsp">Members</a></li>
         <li><a href="#">Feedback History</a></li>
+        
         <% } %>
     </ul>
 </nav>

@@ -76,8 +76,8 @@ public class MemberDAO {
 	
 	//======================================
 	// READ
-	//======================================
-	private void getMemberById(int id, HttpSession session) {
+	//======================================	
+	public void getMemberById(int id, HttpSession session) {
         String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
         
         try (Connection connection = DatabaseUtil.getConnection();
@@ -146,6 +146,54 @@ public class MemberDAO {
 		        }
 		  return null;
 	}
+	
+	public ArrayList<MemberInfo> getAllMemberDetails (boolean isAdmin) {
+		ArrayList<MemberInfo> members = new ArrayList<MemberInfo>();
+		String sql = String.format("SELECT * FROM %s", this.tableName);
+		
+		  try (Connection connection = DatabaseUtil.getConnection();
+		             PreparedStatement stmt = connection.prepareStatement(sql)) {
+		       
+		            ResultSet rs = stmt.executeQuery();
+		            
+		            while (rs.next()) {
+		            	int id = rs.getInt("id");
+		                String name = rs.getString("name");
+		                int role_id = rs.getInt("role_id");
+		                String email = rs.getString("email");
+		                String phone = rs.getString("phone");
+		                ArrayList<Address> address = new ArrayList<Address>();
+		                //==================================================================================
+		                // Second sql to get the address list
+		                //==================================================================================
+		                String sql2 = String.format("Select * from %s WHERE member_id = ?", TABLENAME2);
+		                try (Connection connection2 = DatabaseUtil.getConnection();
+		                        PreparedStatement stmt2 = connection2.prepareStatement(sql2)) {
+			                       stmt2.setInt(1, id);
+			                       ResultSet rs2 = stmt2.executeQuery();
+			                       
+			                       System.out.println(rs2);
+			                       
+			                       while (rs2.next()) {
+			                    	   int addressid = rs2.getInt("id");
+			                    	   String addressStr = rs2.getString("address");
+			                          address.add(new Address(addressid,addressStr));
+			                       }   
+			            } catch (SQLException e) {
+			              	   e.printStackTrace();
+			            }  
+		                
+		                MemberInfo member = new MemberInfo (id, name, role_id, email, phone, address);
+		                members.add(member);
+		               
+		            }
+		            return members;
+		            
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+		  return null;
+	}
 
 	public boolean loginMember(String email, String password, HttpSession session) {
 	    String sql = String.format("SELECT * FROM %s WHERE email = ? AND password = ?", this.tableName);
@@ -170,6 +218,7 @@ public class MemberDAO {
 	    }
 	    return false;
 	}
+	
 
 	//======================================
 	// UPDATE 

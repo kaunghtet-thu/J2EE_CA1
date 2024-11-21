@@ -92,7 +92,8 @@
                     updateMessage = "Invalid field specified.";
             }
         }
-        memberInfo = dao.getMemberDetail(id); // Refresh data after update
+        memberInfo = dao.getMemberDetail(id);
+        dao.getMemberById(id, session);
     }
     
     if ("POST".equalsIgnoreCase(request.getMethod())) {
@@ -126,7 +127,36 @@
         }
         memberInfo = dao.getMemberDetail(id); // Refresh data after update or delete
     }
+    
+    if ("POST".equalsIgnoreCase(request.getMethod())) {
+        String field = request.getParameter("field");
 
+        if (field != null && field.equals("password")) {
+            // Retrieve the password fields from the request
+            String oldPassword = request.getParameter("oldPassword");
+            String newPassword = request.getParameter("newPassword");
+            String confirmNewPassword = request.getParameter("confirmNewPassword");
+
+            updateSuccess = false;
+            updateMessage = "";
+
+            if (newPassword != null && confirmNewPassword != null && newPassword.equals(confirmNewPassword)) {
+                int memberId = id;
+                    updateSuccess = dao.updateMemberPassword(memberId, newPassword, oldPassword);
+                    updateMessage = updateSuccess ? "Password updated successfully!" : "Failed to update password.";
+                    if (!updateSuccess) {
+                    	updateMessage = "Password update failed";
+                    }
+              
+            } else {
+                updateMessage = "New password and confirmation password do not match.";
+            }
+
+  
+        }
+
+         memberInfo = dao.getMemberDetail(id); 
+    }
 
 %>
 
@@ -139,7 +169,6 @@
         </div>
     <% } %>
 
-    <!-- Name -->
     <fieldset>
         <legend>Name:</legend>
         <form method="post" class="edit-form">
@@ -149,7 +178,6 @@
         </form>
     </fieldset>
 
-    <!-- Email -->
     <fieldset>
         <legend>Email:</legend>
         <form method="post" class="edit-form">
@@ -161,7 +189,6 @@
         </form>
     </fieldset>
 
-    <!-- Phone -->
     <fieldset>
         <legend>Phone:</legend>
         <form method="post" class="edit-form">
@@ -171,31 +198,35 @@
         </form>
     </fieldset>
 
-    <!-- Address -->
    <fieldset>
 	    <legend>Address:</legend>
 	    <form method="post" class="edit-form">
 	        <% 
 	            List<Address> addresses = memberInfo.getAddress();
-	            int index = 0;  // Used to create unique names for each input
+	        int index = 0;
+	        	if (addresses.size() > 0) {
+	             
 	            for (Address address : addresses) { 
 	        %>
 	            <input type="hidden" name="field" value="address">
 	            <input type="hidden" name="addressId_<%= index %>" value="<%= address.getId() %>">
-	            <input type="text" name="value_<%= index %>" value="<%= address.getAddress() %>" required>
+	            <%= index+1%> .<input type="text" name="value_<%= index %>" value="<%= address.getAddress() %>" required>
 	            
 	            <button type="submit" name="updateAddress" value="<%= index %>">Update</button>
 	            <button type="submit" name="deleteAddress" value="<%= address.getId() %>">Delete</button>
 	            <br>
 	        <% 
 	            index++;  // Increment index for unique field names
-	            }  
+	            }  }
+	        	else {
 	        %>
+	        	<p>You have no saved addresses yet</p>
+	        	<% } %>
 	    </form>
 	
 	    <form method="post" class="edit-form">
 	        <input type="hidden" name="field" value="newAddress">
-	        <input type="text" id="newAddress" name="value" placeholder="Add a new address" required>
+	        <%=index+1 %> .<input type="text" id="newAddress" name="value" placeholder="Add a new address" required>
 	        <button type="submit">Add</button>
 	    </form>
 	</fieldset>
@@ -203,20 +234,13 @@
 	<fieldset>
 	    <legend>Reset Password</legend>
 	    <form method="post" class="edit-form">
-	        <!-- Hidden field to specify the action -->
 	        <input type="hidden" name="field" value="password">
-	        <input type="password" id="oldPassword" name="oldPassword" placeholder="Enter old password" required>
-	        <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password"required>
-	        <input type="password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Confirm new password" required>
-	        
-	        <!-- Submit Button -->
+	        <input type="password" id="oldPassword" name="oldPassword" placeholder="Enter old password" required><br>
+	        <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password"required><br>
+	        <input type="password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Confirm new password" required><br>
 	        <button type="submit">Update</button>
 	    </form>
 	</fieldset>
-
-
-    
-
 
 </div>
 
