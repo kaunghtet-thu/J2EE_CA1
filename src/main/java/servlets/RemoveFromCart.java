@@ -61,7 +61,8 @@ public class RemoveFromCart extends HttpServlet {
         }
 
         // Retrieve the cart from the session
-        List<Service> cart = (List<Service>) session.getAttribute("cart");
+        @SuppressWarnings("unchecked")
+		List<Service> cart = (List<Service>) session.getAttribute("cart");
         if (cart == null || cart.isEmpty()) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Cart is empty");
             return;

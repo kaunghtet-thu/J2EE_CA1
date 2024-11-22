@@ -53,8 +53,9 @@
     <%
         }
     %>
-    
-    <a href="showAllServiceCategories.jsp">Continue Shopping</a>
+	<form action="showServicesByCategory.jsp" method="get">
+	    <button type="submit">Continue Shopping</button>
+	</form>
     <%@include file="footer.html" %>
     
 </body>

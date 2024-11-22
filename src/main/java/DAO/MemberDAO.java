@@ -18,6 +18,13 @@ public class MemberDAO {
 	  private void setSession(HttpSession session, Member member) {
 	        session.setAttribute("member", member);
 	  }
+	  
+	  private void setSessionKai(HttpSession session, int memberId) {
+	        session.setAttribute("member", returnMemberById(memberId));
+	        List<Service> cart = new ArrayList<>();
+	        session.setAttribute("cart", cart);
+	  }
+
 	//======================================
 	// CREATE
 	//======================================
@@ -77,6 +84,30 @@ public class MemberDAO {
 	//======================================
 	// READ
 	//======================================
+
+private Member returnMemberById(int id) {
+        String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
+        
+        try (Connection connection = DatabaseUtil.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                String name = rs.getString("name");
+                int role_id = rs.getInt("role_id");
+                return new Member(id, name, role_id);
+
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+	
 	private void getMemberById(int id, HttpSession session) {
         String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
         
@@ -147,6 +178,29 @@ public class MemberDAO {
 		  return null;
 	}
 
+//	public boolean loginMember(String email, String password, HttpSession session) {
+//	    String sql = String.format("SELECT * FROM %s WHERE email = ? AND password = ?", this.tableName);
+//
+//	    try (Connection connection = DatabaseUtil.getConnection();
+//	         PreparedStatement stmt = connection.prepareStatement(sql)) {
+//	         
+//	        stmt.setString(1, email);
+//	        stmt.setString(2, password);
+//
+//	        try (ResultSet rs = stmt.executeQuery()) {
+//	            if (rs.next()) {
+//	                // Retrieve member details
+//	                int id = rs.getInt("id");
+//	                getMemberById(id, session);
+//	                return true;
+//	            }
+//	        }
+//
+//	    } catch (SQLException e) {
+//	        System.err.println("Error while logging in: " + e.getMessage());
+//	    }
+//	    return false;
+//	}
 	public boolean loginMember(String email, String password, HttpSession session) {
 	    String sql = String.format("SELECT * FROM %s WHERE email = ? AND password = ?", this.tableName);
 
@@ -160,7 +214,8 @@ public class MemberDAO {
 	            if (rs.next()) {
 	                // Retrieve member details
 	                int id = rs.getInt("id");
-	                getMemberById(id, session);
+//	                getMemberById(id, session);
+	                setSessionKai(session, id);
 	                return true;
 	            }
 	        }

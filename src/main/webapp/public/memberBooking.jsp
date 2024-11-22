@@ -1,15 +1,16 @@
 <%@ page import="java.time.LocalDate, java.time.LocalTime, java.time.LocalDateTime" %>
-<%@ page import="java.util.*, DAO.BookingDAO,bean.Booking" %>
+<%@ page import="java.util.*, DAO.BookingDAO,bean.Booking,bean.Member" %>
 
 <%
     // Initialize DAO
     BookingDAO bookingDAO = new BookingDAO();
+	Member member = (Member)session.getAttribute("member");
+	int memberId = member.getId();
 
     // Handle form actions
     String action = request.getParameter("action");
     if ("create".equals(action)) {
         try {
-            int memberId = Integer.parseInt(request.getParameter("member_id"));
             int serviceId = Integer.parseInt(request.getParameter("service_id"));
             int statusId = Integer.parseInt(request.getParameter("status_id"));
             LocalDate bookingDate = LocalDate.parse(request.getParameter("booking_date"));
@@ -43,7 +44,7 @@
     }
 
     // Fetch all bookings
-    List<Booking> bookings = bookingDAO.getAllBookings();
+    List<Booking> bookings = bookingDAO.getBookingsByMemberId(memberId);
 %>
 
 <!DOCTYPE html>
@@ -201,7 +202,7 @@
 	        <td><%= booking.getBookedAt() %></td>
 	        <td>
 	            <!-- Delete -->
-	            <form action="testBooking.jsp" method="post" style="display:inline;">
+	            <form action="memberBooking.jsp" method="post" style="display:inline;">
 	                <input type="hidden" name="action" value="delete">
 	                <input type="hidden" name="id" value="<%= booking.getId() %>">
 	                <button type="submit">Delete</button>
@@ -213,19 +214,8 @@
 	    %>
 	</table>
 	
-	<!-- Create Booking Form -->
-	<form action="testBooking.jsp" method="post">
-	    <input type="hidden" name="action" value="create">
-	    <input type="number" name="member_id" placeholder="Member ID" required>
-	    <input type="number" name="service_id" placeholder="Service ID" required>
-	    <input type="number" name="status_id" placeholder="Status ID" required>
-	    <input type="date" name="booking_date" required>
-	    <input type="time" name="booking_time" required>
-	    <button type="submit">Create Booking</button>
-	</form>
-	
 	<!-- Update Booking Form -->
-	<form action="testBooking.jsp" method="post">
+	<form action="memberBooking.jsp" method="post">
 	    <input type="hidden" name="action" value="update">
 	    <input type="number" name="id" placeholder="Booking ID" required>
 	    <input type="number" name="status_id" placeholder="New Status ID" required>

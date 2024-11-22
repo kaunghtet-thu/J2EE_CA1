@@ -57,6 +57,38 @@ public class BookingDAO {
         }
         return bookings;
     }
+    
+    public List<Booking> getBookingsByMemberId(int memberId) {
+        List<Booking> bookings = new ArrayList<>();
+        String sql = "SELECT * FROM booking WHERE member_id = ?";
+
+        try (Connection connection = DatabaseUtil.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            // Set the parameter for member_id
+            stmt.setInt(1, memberId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Booking booking = new Booking(
+                            rs.getInt("id"),
+                            rs.getInt("member_id"),
+                            rs.getInt("service_id"),
+                            rs.getInt("status_id"),
+                            rs.getObject("staff_id", Integer.class),
+                            rs.getDate("booking_date").toLocalDate(),
+                            rs.getTime("booking_time").toLocalTime(),
+                            rs.getTimestamp("booked_at").toLocalDateTime()
+                    );
+                    bookings.add(booking);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookings;
+    }
+
 
     // Update: Update booking status
     public boolean updateBookingStatus(int id, int statusId) {

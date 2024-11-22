@@ -20,7 +20,7 @@ String password = request.getParameter("password");
 
 
 MemberDAO dao = new MemberDAO();
-dao.loginMember(email, password, session);
+//dao.loginMember(email, password, session);
 	if (dao.loginMember(email, password, session)) {
 		response.sendRedirect("index.jsp");
 	} else {

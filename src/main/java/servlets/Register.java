@@ -37,9 +37,9 @@ public class Register extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 		
-		String username = request.getParameter("username");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+//		String username = request.getParameter("username");
+//        String email = request.getParameter("email");
+//        String password = request.getParameter("password");
         
         
 	}
