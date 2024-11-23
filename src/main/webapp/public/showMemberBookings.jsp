@@ -1,10 +1,11 @@
 <%@ page import="java.time.LocalDate, java.time.LocalTime, java.time.LocalDateTime" %>
-<%@ page import="java.util.*, DAO.BookingDAO,bean.Booking,bean.Member" %>
+<%@ page import="java.util.*, DAO.BookingDAO,bean.Booking" %>
+	<%@include file="header.jsp" %>
 
 <%
     // Initialize DAO
     BookingDAO bookingDAO = new BookingDAO();
-	Member member = (Member)session.getAttribute("member");
+	//Member member = (Member)session.getAttribute("member");
 	int memberId = member.getId();
 
     // Handle form actions
@@ -202,7 +203,7 @@
 	        <td><%= booking.getBookedAt() %></td>
 	        <td>
 	            <!-- Delete -->
-	            <form action="memberBooking.jsp" method="post" style="display:inline;">
+	            <form action="showMemberBookings.jsp" method="post" style="display:inline;">
 	                <input type="hidden" name="action" value="delete">
 	                <input type="hidden" name="id" value="<%= booking.getId() %>">
 	                <button type="submit">Delete</button>
@@ -221,5 +222,7 @@
 	    <input type="number" name="status_id" placeholder="New Status ID" required>
 	    <button type="submit">Update Booking</button>
 	</form>
+	<%@include file="footer.html" %>
+	
 </body>
 </html>

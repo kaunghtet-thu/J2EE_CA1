@@ -11,6 +11,8 @@
   <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
 </head>
 <body>
+<%@include file="header.jsp" %>
+
 <%
 try {
     String serviceId = request.getParameter("serviceId");
@@ -87,9 +89,11 @@ try {
   </script>
   <button 
       class="btn btn-primary" 
-      onclick="window.location.href='<%= request.getContextPath() %>/public/memberBooking.jsp';">
+      onclick="window.location.href='<%= request.getContextPath() %>/public/showMemberBookings.jsp';">
      	See your bookings
     </button>
+    <%@include file="footer.html" %>
+    
 </body>
 </html>
 

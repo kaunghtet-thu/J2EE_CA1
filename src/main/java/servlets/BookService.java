@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import DAO.BookingDAO;
 import bean.Booking;
 import bean.Member;
+import bean.Service;
 
 /**
  * Servlet implementation class BookService
@@ -43,8 +45,6 @@ public class BookService extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-//		doGet(request, response);
 		HttpSession session = request.getSession();
 		
 		Member member = (Member) session.getAttribute("member");
@@ -55,12 +55,20 @@ public class BookService extends HttpServlet {
 		BookingDAO dao = new BookingDAO();
 		boolean success = dao.addBooking(new Booking(member.getId(), serviceId, 1, null, bookingDate, bookingTime, LocalDateTime.now()));
         	
-		if(success)
-			response.sendRedirect("public/booking.jsp?successMsg=Booked successfully!");
+		if(success) {
+			List<Service> cart = (List<Service>) session.getAttribute("cart");
+
+		    if (cart != null) {
+		        int serviceIdToRemove = serviceId; // Replace with actual ID or logic to get it
+		        cart.removeIf(service -> service.getId() == serviceIdToRemove);
+
+		        // Update the cart in the session
+		        session.setAttribute("cart", cart);
+		    }
+			response.sendRedirect("public/bookAService.jsp?successMsg=Booked successfully!");   //
+		}
 		else
-			response.sendRedirect("public/booking.jsp?errormsg=Booked failed.");
-			
-		
+			response.sendRedirect("public/bookAService.jsp?errormsg=Booked failed.");
 	}
 
 }
