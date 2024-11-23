@@ -44,21 +44,23 @@
         .iconText:hover {
             color: #007bff;
         }
-        .login-button {
+        .login-button, .logout-button, .profile-button {
             font-size: 14px;
             padding: 5px 10px;
-            border: 1px solid #007bff;
-            background-color: white;
-            color: #007bff;
+            border: 1px solid grey;
+            background-color: #c5d1ba;
             cursor: pointer;
             transition: background-color 0.3s, color 0.3s;
         }
-        .login-button:hover {
-            background-color: #007bff;
+        .login-button:hover, .logout-button:hover, .profile-button:hover {
+            background-color: #4cae4c;
             color: white;
         }
-        
-        /* Navbar styling */
+        a {
+        	text-decoration: none;
+        	color: #000;
+        	margin-right:3px;
+        }
         nav {
             display: flex;
             background-color: #c5d1ba;
@@ -84,6 +86,7 @@
         nav ul li a:hover {
             color: #007bff;
         }
+       
     </style>
 </head>
 <body>
@@ -92,17 +95,22 @@
 
 <header>
     <div class="header-title">
-        <span class="highlight"><i>SPOTLESS</i></span> Cleaning Services
+    	 <% if (isMember || isAdmin || isStaff) { %>
+        <i>WELCOME</i> <%=member.getName().toUpperCase() %>
+        <%} else { %>
+        <i>SPOTLESS</i> Cleaning Services
+        <%} %>
     </div>
     <div class="profile-icon">
-        <i class="fas fa-user-circle"></i>
         <% if (isMember || isAdmin || isStaff) { %>
-            <a href="profile.jsp" class="iconText">Welcome <%= member.getName().toUpperCase() %></a>
+            <a href="profile.jsp" class="profile-button">Profile</a><br>
+            <button class ="logout-button" onclick="location.href='logout.jsp'">Log out</button>
         <% } else { %>
             <button class="login-button" onclick="location.href='login.jsp'">Log in</button>
         <% } %>
-    </div>
+    </div> 
 </header>
+
 
 <nav>
     <ul>

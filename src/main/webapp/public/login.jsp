@@ -20,6 +20,7 @@
             padding: 20px;
             width: 300px;
             text-align: center;
+            margin-bottom: 10px
         }
 
         .login-card input[type="email"],
@@ -32,14 +33,15 @@
             border-radius: 5px;
         }
 
-        .login-card button {
-            background-color: #5cb85c;
-            color: #fff;
+          .login-card button {
+            background-color:#c5d1ba;
+            color: #000;
             border: none;
             cursor: pointer;
         }
 
         .login-card button:hover {
+            color: white;
             background-color: #4cae4c;
         }
 
@@ -64,6 +66,11 @@
     if(message != null && message.equals("invalidLogin")) {
         out.print("<h3>Email or password incorrect. Please try again!</h3><br>");        
     } 
+    
+    String successMessage = request.getParameter("successMessage");
+    if(successMessage != null && successMessage.equals("Registration successful, please login.")) {
+    	out.print("<h3>" +successMessage+ "</h3>");
+    }
 %>
     <div class="container">
         <div class="login-card">

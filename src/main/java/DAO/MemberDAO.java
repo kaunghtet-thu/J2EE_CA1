@@ -1,29 +1,44 @@
 package DAO;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import DB.DatabaseUtil;
-import bean.Address;
-import bean.Member;
-import bean.MemberInfo;
-import bean.Service;
+import bean.*;
 import jakarta.servlet.http.HttpSession;
 
 public class MemberDAO {
 	private String tableName = "member";
 	private final String TABLENAME2 = "address";
+	private final String TABLENAME3 = "role";
 	
 	  private void setSession(HttpSession session, Member member, int actorId) {
 		  if (member.getId()==actorId)
 	        session.setAttribute("member", member);
 	  }
+	  
+	  public static String hashPassword(String password) {
+	        try {
+	            MessageDigest md = MessageDigest.getInstance("SHA-256");
+	            byte[] hashBytes = md.digest(password.getBytes());
+	            StringBuilder hexString = new StringBuilder();
+	            for (byte b : hashBytes) {
+	                hexString.append(String.format("%02x", b));
+	            }
+	            return hexString.toString();
+	        } catch (NoSuchAlgorithmException e) {
+	            e.printStackTrace();
+	        }
+	        return null;
+	    }
 	//======================================
 	// CREATE
 	//======================================
 	public Member createMember(String name, String email, String hashedPassword, String phone) {
-	    String sql = String.format("INSERT INTO %s (name, email, password, phone, role_id) VALUES (?, ?, ?, ?, 1)", this.tableName);
+	    String sql = String.format("INSERT INTO %s (name, email, password, phone, role_id) VALUES (?, ?, ?, ?, 2)", this.tableName);
 
 	    try (Connection connection = DatabaseUtil.getConnection();
 	         PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -78,6 +93,48 @@ public class MemberDAO {
 	//======================================
 	// READ
 	//======================================	
+	public String getRoleName (int roleId) {
+		String sql = String.format("Select * from %s WHERE id = ?", this.TABLENAME3);
+		
+		 try (Connection connection = DatabaseUtil.getConnection();
+	             PreparedStatement stmt = connection.prepareStatement(sql)) {
+	            
+	            stmt.setInt(1, roleId);
+	            ResultSet rs = stmt.executeQuery();
+	            
+	            if (rs.next()) {
+	                String name = rs.getString("name");
+	                return name;
+	            }
+	            
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		 return null;
+	}
+	
+	public ArrayList<Role> getRoleList () {
+		String sql = String.format("SELECT * FROM %s", this.TABLENAME3);
+		ArrayList<Role> roleNames = new ArrayList<>();
+		 try (Connection connection = DatabaseUtil.getConnection();
+	             PreparedStatement stmt = connection.prepareStatement(sql)) {
+	         
+	            ResultSet rs = stmt.executeQuery();
+	            
+	            while (rs.next()) {
+	            	int id = rs.getInt("id");
+	                String name = rs.getString("name");
+	                roleNames.add(new Role(id,name));
+	                
+	            }
+	            return roleNames;
+	            
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		 return null;
+	}
+	
 	public void getMemberById(int id, HttpSession session, int actorId) {
         String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
         
@@ -102,51 +159,47 @@ public class MemberDAO {
         }
     }
 	
-	public MemberInfo getMemberDetail (int id) {
-		String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
-		
-		  try (Connection connection = DatabaseUtil.getConnection();
-		             PreparedStatement stmt = connection.prepareStatement(sql)) {
-		            
-		            stmt.setInt(1, id);
-		       
-		            ResultSet rs = stmt.executeQuery();
-		            
-		            if (rs.next()) {
-		                String name = rs.getString("name");
-		                int role_id = rs.getInt("role_id");
-		                String email = rs.getString("email");
-		                String phone = rs.getString("phone");
-		                ArrayList<Address> address = new ArrayList<Address>();
-		                //==================================================================================
-		                // Second sql to get the address list
-		                //==================================================================================
-		                String sql2 = String.format("Select * from %s WHERE member_id = ?", TABLENAME2);
-		                try (Connection connection2 = DatabaseUtil.getConnection();
-		                        PreparedStatement stmt2 = connection2.prepareStatement(sql2)) {
-			                       stmt2.setInt(1, id);
-			                       ResultSet rs2 = stmt2.executeQuery();
-			                       
-			                       System.out.println(rs2);
-			                       
-			                       while (rs2.next()) {
-			                    	   int addressid = rs2.getInt("id");
-			                    	   String addressStr = rs2.getString("address");
-			                          address.add(new Address(addressid,addressStr));
-			                       }   
-			            } catch (SQLException e) {
-			              	   e.printStackTrace();
-			            }  
-		                
-		                MemberInfo member = new MemberInfo (id, name, role_id, email, phone, address);
-		                return member;
-		            }
-		            
-		        } catch (SQLException e) {
-		            e.printStackTrace();
-		        }
-		  return null;
+	public MemberInfo getMemberDetail(int id) {
+	    String sql = String.format("SELECT m.id AS member_id, m.name, m.role_id, m.email, m.phone, " +
+	                               "a.id AS address_id, a.address " +
+	                               "FROM %s m LEFT JOIN %s a ON m.id = a.member_id WHERE m.id = ?", 
+	                               this.tableName, TABLENAME2);
+
+	    try (Connection connection = DatabaseUtil.getConnection();
+	         PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+	        stmt.setInt(1, id);
+	        ResultSet rs = stmt.executeQuery();
+
+	        MemberInfo member = null;
+	        ArrayList<Address> addresses = new ArrayList<>();
+
+	        while (rs.next()) {
+	            if (member == null) {
+	                // Initialize member info on the first result
+	                String name = rs.getString("name");
+	                int roleId = rs.getInt("role_id");
+	                String email = rs.getString("email");
+	                String phone = rs.getString("phone");
+	                member = new MemberInfo(id, name, roleId, email, phone, addresses);
+	            }
+
+	            // Add address if available
+	            int addressId = rs.getInt("address_id");
+	            String addressStr = rs.getString("address");
+	            if (addressStr != null) {
+	                addresses.add(new Address(addressId, addressStr));
+	            }
+	        }
+
+	        return member;
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
 	}
+
 	
 	public ArrayList<MemberInfo> getAllMemberDetails (boolean isAdmin) {
 		ArrayList<MemberInfo> members = new ArrayList<MemberInfo>();
@@ -203,7 +256,7 @@ public class MemberDAO {
 	         PreparedStatement stmt = connection.prepareStatement(sql)) {
 	         
 	        stmt.setString(1, email);
-	        stmt.setString(2, password);
+	        stmt.setString(2, hashPassword(password));
 
 	        try (ResultSet rs = stmt.executeQuery()) {
 	            if (rs.next()) {
@@ -219,7 +272,6 @@ public class MemberDAO {
 	    }
 	    return false;
 	}
-	
 
 	//======================================
 	// UPDATE 
@@ -288,7 +340,7 @@ public class MemberDAO {
 	}
 	// Only admin can update the role 
 	public boolean updateMemberRole(int id, int newRole, int actorId, HttpSession session) {
-	    String sql = String.format("UPDATE %s SET role_id = ? WHERE id = ? AND role_id = 1", this.tableName);
+	    String sql = String.format("UPDATE %s SET role_id = ? WHERE id = ?", this.tableName);
 	    
 	    try (Connection connection = DatabaseUtil.getConnection();
 	         PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -296,7 +348,6 @@ public class MemberDAO {
 	        // Set parameters
 	        stmt.setInt(1, newRole);
 	        stmt.setInt(2, id);
-	        stmt.setInt(3, actorId);
 
 	        // Execute update
 	        int rowsAffected = stmt.executeUpdate();
@@ -357,23 +408,24 @@ public class MemberDAO {
 	//======================================
 	// DELETE
 	//======================================
-	public boolean deleteMember(int id, int actorId) {
-	    String sql = String.format("DELETE from table WHERE id = ? AND (id = ? OR role_id = 1)", this.tableName);
+	public boolean deleteMember(int id, boolean isAdmin) {
+	    String sql = String.format("DELETE from %s WHERE id = ?", this.tableName);
+	    if (isAdmin) {
+	    	try (Connection connection = DatabaseUtil.getConnection();
+	   	         PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+	   	        // Set parameters
+	   	        stmt.setInt(1, id);
+
+	   	        // Execute update
+	   	        int rowsAffected = stmt.executeUpdate();
+	   	        return rowsAffected > 0; 
+	   	    } catch (SQLException e) {
+	   	        System.err.println("Error while updating member phone: " + e.getMessage());
+	   	        return false;
+	   	    }
+	    } else return false;
 	    
-	    try (Connection connection = DatabaseUtil.getConnection();
-	         PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-	        // Set parameters
-	        stmt.setInt(1, id);
-	        stmt.setInt(2, actorId);
-
-	        // Execute update
-	        int rowsAffected = stmt.executeUpdate();
-	        return rowsAffected > 0; 
-	    } catch (SQLException e) {
-	        System.err.println("Error while updating member phone: " + e.getMessage());
-	        return false;
-	    }
 	}
 	
 	public boolean deleteMemberAddress (int addressId) {
