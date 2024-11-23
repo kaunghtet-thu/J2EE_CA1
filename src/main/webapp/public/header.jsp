@@ -107,11 +107,11 @@
 <nav>
     <ul>
         <li><a href="index.jsp">Home</a></li>
-        <li><a href="#">Services</a></li>
+        <li><a href="index.jsp">Services</a></li>
         <% if (isMember){
         %>	
        
-        <li><a href="#">Cart</a></li>
+        <li><a href="cart.jsp">Cart</a></li>
         <li><a href="#">Booking History</a></li>
         <% } %>
         <% if (isAdmin){

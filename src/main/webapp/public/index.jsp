@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="bean.*" %>
 <%@ page import="java.util.*" %>
-<%@page import="DAO.*"%>
+<%@ page import="DAO.*"%>
 
 <!DOCTYPE html>
 <html>
@@ -71,6 +71,50 @@
     .categoryItem:hover .dropdown-arrow {
         transform: rotate(180deg);
     }
+    .center {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.category-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    padding: 10px;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+}
+
+.category-item:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.category-link {
+    all: unset; /* Reset button styles */
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+    cursor: pointer;
+    text-align: left;
+    display: block;
+    width: 100%;
+    transition: color 0.3s;
+}
+
+.category-link:hover {
+    color: #0056b3;
+}
+    
 </style>
 
 </head>
@@ -90,25 +134,46 @@
 		<td>4. Checkout</td>
 	</tr>
 </table>
-<h2>Services available</h2>
-<%
-	ServiceCategoryDAO dao = new ServiceCategoryDAO();
-    List<ServiceCategory> categories = dao.getAllServiceCategories();
 
-%>
- <div class="category">
+ <div class="center">
+    <h1>All Service Categories</h1>
+    <%
+    
+        ServiceCategoryDAO dao = new ServiceCategoryDAO();
+        List<ServiceCategory> allCategories = dao.getAllServiceCategories();
+        
+        if (!allCategories.isEmpty()) {
+    %>
+    <!-- Display categories in a stylish list -->
+    <div class="category-list">
         <%
-        if (!categories.isEmpty()) {
-            for (ServiceCategory categotry : categories) {
+            for (ServiceCategory category : allCategories) {
         %>
-            <div class="categoryItem">
-                <span><%= categotry.getName() %></span>
-                <span class="dropdown-arrow">&#9662;</span>
-            </div>
+        <!-- Each category item -->
+        <form action="showServicesByCategory.jsp" method="post" class="category-item">
+            <!-- Hidden input to send categoryId -->
+            <input type="hidden" name="categoryId" value="<%= category.getId() %>">
+            <!-- Clickable category name -->
+            <button type="submit" class="category-link">
+                <%= category.getName() %>
+            </button>
+        </form>
         <%
-            }}
+            }
         %>
     </div>
+    <%
+        } else {
+    %>
+    <p style="text-align: center;">No Service Categories Found</p>
+    <%
+        }
+    %>
+</div>
+
+
+
+
 <%@ include file="footer.html" %>
 </body>
 </html>
