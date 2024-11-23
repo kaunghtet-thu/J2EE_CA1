@@ -15,6 +15,8 @@
   MemberDAO dao = new MemberDAO();
 	ArrayList<MemberInfo> members = dao.getAllMemberDetails(isAdmin);
 	out.print(members.size());
+	
+	
 
  %>
  <table border="1" style="width:100%; border-collapse:collapse;">
@@ -47,7 +49,7 @@
                     for (Address address : addresses) { 
                 %>
                 <div>
-                    <%= address.getAddress() %> <!-- Replace getFullAddress with your method to display the address -->
+                    <%= address.getAddress() %> 
                 </div>
                 <% 
                     }
@@ -57,11 +59,15 @@
                 <% } %>
             </td>
             <td>
-            	<form method="post">
-                    <input type="hidden" name="id" value="<%= eachMember.getId() %>">
-                    <button type="submit" name="delete" value="<%= eachMember.getId() %>">Manage</button>
-                </form>
-            </td>
+			    <form method="post" action="profile.jsp">
+			        <input type="hidden" name="memberId" value="<%= eachMember.getId() %>">
+			        <button type="submit" name="action" value="manage">Manage</button>
+			    </form>
+			    <form method="post" action="MemberController">
+			        <input type="hidden" name="id" value="<%= eachMember.getId() %>">
+			        <button type="submit" name="action" value="delete">Delete</button>
+			    </form>
+			</td>
         </tr>
         <% 
             }

@@ -15,7 +15,8 @@ public class MemberDAO {
 	private String tableName = "member";
 	private final String TABLENAME2 = "address";
 	
-	  private void setSession(HttpSession session, Member member) {
+	  private void setSession(HttpSession session, Member member, int actorId) {
+		  if (member.getId()==actorId)
 	        session.setAttribute("member", member);
 	  }
 	//======================================
@@ -77,7 +78,7 @@ public class MemberDAO {
 	//======================================
 	// READ
 	//======================================	
-	public void getMemberById(int id, HttpSession session) {
+	public void getMemberById(int id, HttpSession session, int actorId) {
         String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
         
         try (Connection connection = DatabaseUtil.getConnection();
@@ -90,7 +91,7 @@ public class MemberDAO {
                 String name = rs.getString("name");
                 int role_id = rs.getInt("role_id");
                 Member member = new Member(id, name, role_id);
-                setSession(session, member);
+                setSession(session, member, actorId);
                 List<Service> cart = new ArrayList<>();
                 session.setAttribute("cart", cart);
 
@@ -208,7 +209,7 @@ public class MemberDAO {
 	            if (rs.next()) {
 	                // Retrieve member details
 	                int id = rs.getInt("id");
-	                getMemberById(id, session);
+	                getMemberById(id, session, id);
 	                return true;
 	            }
 	        }
@@ -224,7 +225,7 @@ public class MemberDAO {
 	// UPDATE 
 	//======================================
 	public boolean updateMemberName(int id, String name, int actorId, HttpSession session) {
-	    String sql = String.format("UPDATE %s SET name = ? WHERE id = ? AND (id = ? OR role_id = 1)", this.tableName);
+	    String sql = String.format("UPDATE %s SET name = ? WHERE id = ?", this.tableName);
 	    
 	    try (Connection connection = DatabaseUtil.getConnection();
 	         PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -232,13 +233,13 @@ public class MemberDAO {
 	        // Set parameters
 	        stmt.setString(1, name);
 	        stmt.setInt(2, id);
-	        stmt.setInt(3, actorId);
+	 
 	        
 	        // Execute update
 	        int rowsAffected = stmt.executeUpdate();
 	        if (rowsAffected > 0) {
 	            // If update is successful, fetch the updated member details
-	        	getMemberById(id, session);
+	        	getMemberById(id, session, actorId);
 	        	return true;
 	        }
 	    } catch (SQLException e) {
@@ -247,8 +248,8 @@ public class MemberDAO {
 	    return false;
 	}
 	
-	public boolean updateMemberPhone(int id, String phone, int actorId) {
-	    String sql = String.format("UPDATE %s SET phone = ? WHERE id = ? AND (id = ? OR role_id = 1)", this.tableName);
+	public boolean updateMemberPhone(int id, String phone) {
+	    String sql = String.format("UPDATE %s SET phone = ? WHERE id = ?", this.tableName);
 	    
 	    try (Connection connection = DatabaseUtil.getConnection();
 	         PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -256,7 +257,6 @@ public class MemberDAO {
 	        // Set parameters
 	        stmt.setString(1, phone);
 	        stmt.setInt(2, id);
-	        stmt.setInt(3, actorId);
 
 	        // Execute update
 	        int rowsAffected = stmt.executeUpdate();
@@ -301,7 +301,7 @@ public class MemberDAO {
 	        // Execute update
 	        int rowsAffected = stmt.executeUpdate();
 	        if( rowsAffected > 0) {
-	        	getMemberById(id, session);
+	        	getMemberById(id, session, actorId);
 	        	return true;
 	        }; 
 	    } catch (SQLException e) {
