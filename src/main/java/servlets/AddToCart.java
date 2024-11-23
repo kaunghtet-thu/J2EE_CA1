@@ -8,15 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import DAO.ServiceDAO;
 import bean.Service;
 
 /**
- * Servlet implementation class AddToCart
+ *  implementation class AddToCart
  */
 @WebServlet("/public/AddToCart")
 public class AddToCart extends HttpServlet {
@@ -36,8 +34,6 @@ public class AddToCart extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
-		
-		
 	}
 
 	/**
@@ -45,17 +41,12 @@ public class AddToCart extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
 		
 		String serviceId = request.getParameter("serviceId");
 		int id = Integer.parseInt(serviceId);
-		System.out.print("current id = ");
-		System.out.println(id);
 	
-	    // Retrieve the service object using the serviceId (you may need to fetch it from a database or service list)
 	    ServiceDAO dao = new ServiceDAO();
 	    Service service = dao.getServiceById(id); // Implement this method to get the service
-        PrintWriter out = response.getWriter();
 
 	
 	    if (service == null) {
@@ -67,28 +58,21 @@ public class AddToCart extends HttpServlet {
         HttpSession session = request.getSession();
 
         // Retrieve the cart from the session, or create a new one if it doesn't exist
-        List<Service> cart = (List<Service>) session.getAttribute("cart");
+        @SuppressWarnings("unchecked")
+		List<Service> cart = (List<Service>) session.getAttribute("cart");
         
         	boolean alreadyInCart = false;
-        	System.out.println("cart item ids");
-        	for(Service cartItem : cart) {
-        		System.out.println(cartItem.getId());
-        		if(cartItem.getId() == id)
-        			alreadyInCart = true;
-        	}
-            // Check if the service is already in the cart
-//        	alreadyInCart = cart.stream().anyMatch(item -> item.equals(service));
+        	
+        	alreadyInCart = cart.stream().anyMatch(item -> item.getId() == id);
+        	
             if (alreadyInCart) {
-                // Redirect with a message if the item is already in the cart
-                out.print("<br>This item is already in your cart.");
+            	String error = "Already in the cart!";
+                response.sendRedirect("showServicesByCategory.jsp?errorMsg=" + error);
                 return;
             }
 
         // Add the service to the cart
         cart.add(service);
-
-        // Redirect to a success or cart page
         response.sendRedirect("cart.jsp");
 	}
-
 }

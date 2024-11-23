@@ -20,6 +20,7 @@ public class MemberDAO {
 	        session.setAttribute("member", member);
 	  }
 	  
+
 	  public static String hashPassword(String password) {
 	        try {
 	            MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -34,6 +35,8 @@ public class MemberDAO {
 	        }
 	        return null;
 	    }
+
+
 	//======================================
 	// CREATE
 	//======================================
@@ -136,6 +139,7 @@ public class MemberDAO {
 	}
 	
 	public void getMemberById(int id, HttpSession session, int actorId) {
+
         String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
         
         try (Connection connection = DatabaseUtil.getConnection();
@@ -391,8 +395,8 @@ public class MemberDAO {
 		         PreparedStatement stmt = connection.prepareStatement(sql)) {
 
 		        // Set parameters
-		        stmt.setString(1, hashedNewPassword); 
-		        stmt.setString(2, hashedOldPassword);
+		        stmt.setString(1, hashPassword(hashedNewPassword)); 
+		        stmt.setString(2,hashPassword(hashedOldPassword));
 		        stmt.setInt(3, id);      
 		        // Execute update
 		        int rowsAffected = stmt.executeUpdate();

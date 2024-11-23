@@ -6,8 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
 
 import DAO.MemberDAO;
 import bean.Member;
@@ -40,11 +39,13 @@ public class Register extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String phone = request.getParameter("phone");
 
+		doGet(request, response);
+
+		String name = request.getParameter("name");
+		String email= request.getParameter("email");
+		String password= request.getParameter("password");
+		String phone= request.getParameter("phone");
         // Check if the fields are not empty
         if (name == null || email == null || password == null || phone == null ||
             name.isEmpty() || email.isEmpty() || password.isEmpty() || phone.isEmpty()) {
