@@ -15,7 +15,8 @@ public class MemberDAO {
 	private String tableName = "member";
 	private final String TABLENAME2 = "address";
 	
-	  private void setSession(HttpSession session, Member member) {
+	  private void setSession(HttpSession session, Member member, int actorId) {
+		  if (member.getId()==actorId)
 	        session.setAttribute("member", member);
 	  }
 	  
@@ -83,6 +84,7 @@ public class MemberDAO {
 	
 	//======================================
 	// READ
+
 	//======================================
 
 private Member returnMemberById(int id) {
@@ -109,6 +111,7 @@ private Member returnMemberById(int id) {
 
 	
 	private void getMemberById(int id, HttpSession session) {
+
         String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
         
         try (Connection connection = DatabaseUtil.getConnection();
@@ -121,7 +124,7 @@ private Member returnMemberById(int id) {
                 String name = rs.getString("name");
                 int role_id = rs.getInt("role_id");
                 Member member = new Member(id, name, role_id);
-                setSession(session, member);
+                setSession(session, member, actorId);
                 List<Service> cart = new ArrayList<>();
                 session.setAttribute("cart", cart);
 
@@ -177,6 +180,54 @@ private Member returnMemberById(int id) {
 		        }
 		  return null;
 	}
+	
+	public ArrayList<MemberInfo> getAllMemberDetails (boolean isAdmin) {
+		ArrayList<MemberInfo> members = new ArrayList<MemberInfo>();
+		String sql = String.format("SELECT * FROM %s", this.tableName);
+		
+		  try (Connection connection = DatabaseUtil.getConnection();
+		             PreparedStatement stmt = connection.prepareStatement(sql)) {
+		       
+		            ResultSet rs = stmt.executeQuery();
+		            
+		            while (rs.next()) {
+		            	int id = rs.getInt("id");
+		                String name = rs.getString("name");
+		                int role_id = rs.getInt("role_id");
+		                String email = rs.getString("email");
+		                String phone = rs.getString("phone");
+		                ArrayList<Address> address = new ArrayList<Address>();
+		                //==================================================================================
+		                // Second sql to get the address list
+		                //==================================================================================
+		                String sql2 = String.format("Select * from %s WHERE member_id = ?", TABLENAME2);
+		                try (Connection connection2 = DatabaseUtil.getConnection();
+		                        PreparedStatement stmt2 = connection2.prepareStatement(sql2)) {
+			                       stmt2.setInt(1, id);
+			                       ResultSet rs2 = stmt2.executeQuery();
+			                       
+			                       System.out.println(rs2);
+			                       
+			                       while (rs2.next()) {
+			                    	   int addressid = rs2.getInt("id");
+			                    	   String addressStr = rs2.getString("address");
+			                          address.add(new Address(addressid,addressStr));
+			                       }   
+			            } catch (SQLException e) {
+			              	   e.printStackTrace();
+			            }  
+		                
+		                MemberInfo member = new MemberInfo (id, name, role_id, email, phone, address);
+		                members.add(member);
+		               
+		            }
+		            return members;
+		            
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+		  return null;
+	}
 
 //	public boolean loginMember(String email, String password, HttpSession session) {
 //	    String sql = String.format("SELECT * FROM %s WHERE email = ? AND password = ?", this.tableName);
@@ -214,8 +265,10 @@ private Member returnMemberById(int id) {
 	            if (rs.next()) {
 	                // Retrieve member details
 	                int id = rs.getInt("id");
+
 //	                getMemberById(id, session);
 	                setSessionKai(session, id);
+
 	                return true;
 	            }
 	        }
@@ -225,12 +278,13 @@ private Member returnMemberById(int id) {
 	    }
 	    return false;
 	}
+	
 
 	//======================================
 	// UPDATE 
 	//======================================
 	public boolean updateMemberName(int id, String name, int actorId, HttpSession session) {
-	    String sql = String.format("UPDATE %s SET name = ? WHERE id = ? AND (id = ? OR role_id = 1)", this.tableName);
+	    String sql = String.format("UPDATE %s SET name = ? WHERE id = ?", this.tableName);
 	    
 	    try (Connection connection = DatabaseUtil.getConnection();
 	         PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -238,13 +292,13 @@ private Member returnMemberById(int id) {
 	        // Set parameters
 	        stmt.setString(1, name);
 	        stmt.setInt(2, id);
-	        stmt.setInt(3, actorId);
+	 
 	        
 	        // Execute update
 	        int rowsAffected = stmt.executeUpdate();
 	        if (rowsAffected > 0) {
 	            // If update is successful, fetch the updated member details
-	        	getMemberById(id, session);
+	        	getMemberById(id, session, actorId);
 	        	return true;
 	        }
 	    } catch (SQLException e) {
@@ -253,8 +307,8 @@ private Member returnMemberById(int id) {
 	    return false;
 	}
 	
-	public boolean updateMemberPhone(int id, String phone, int actorId) {
-	    String sql = String.format("UPDATE %s SET phone = ? WHERE id = ? AND (id = ? OR role_id = 1)", this.tableName);
+	public boolean updateMemberPhone(int id, String phone) {
+	    String sql = String.format("UPDATE %s SET phone = ? WHERE id = ?", this.tableName);
 	    
 	    try (Connection connection = DatabaseUtil.getConnection();
 	         PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -262,7 +316,6 @@ private Member returnMemberById(int id) {
 	        // Set parameters
 	        stmt.setString(1, phone);
 	        stmt.setInt(2, id);
-	        stmt.setInt(3, actorId);
 
 	        // Execute update
 	        int rowsAffected = stmt.executeUpdate();
@@ -307,7 +360,7 @@ private Member returnMemberById(int id) {
 	        // Execute update
 	        int rowsAffected = stmt.executeUpdate();
 	        if( rowsAffected > 0) {
-	        	getMemberById(id, session);
+	        	getMemberById(id, session, actorId);
 	        	return true;
 	        }; 
 	    } catch (SQLException e) {
@@ -339,8 +392,8 @@ private Member returnMemberById(int id) {
 	    }
 	}
 	// Admin cannot edit the user email and password
-	public boolean updateMemberPassword (int id, String hashedNewPassword, String hashedOldPassword, int actorId) {
-		 String sql = String.format("UPDATE %s SET password = ? WHERE password = ? AND id = ? AND id = ?", this.tableName);
+	public boolean updateMemberPassword (int id, String hashedNewPassword, String hashedOldPassword) {
+		 String sql = String.format("UPDATE %s SET password = ? WHERE password = ? AND id = ?", this.tableName);
 		    
 		    try (Connection connection = DatabaseUtil.getConnection();
 		         PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -349,8 +402,6 @@ private Member returnMemberById(int id) {
 		        stmt.setString(1, hashedNewPassword); 
 		        stmt.setString(2, hashedOldPassword);
 		        stmt.setInt(3, id);      
-		        stmt.setInt(4, actorId);   
-
 		        // Execute update
 		        int rowsAffected = stmt.executeUpdate();
 		        return rowsAffected > 0; 
@@ -382,6 +433,27 @@ private Member returnMemberById(int id) {
 	        System.err.println("Error while updating member phone: " + e.getMessage());
 	        return false;
 	    }
+	}
+	
+	public boolean deleteMemberAddress (int addressId) {
+		 String sql = String.format("DELETE FROM %s WHERE id = ? ", this.TABLENAME2);
+
+		    try (Connection connection = DatabaseUtil.getConnection();
+		         PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+		        stmt.setInt(1, addressId);
+
+		        int rowsAffected = stmt.executeUpdate();
+
+		        // Check if a row was inserted
+		        if (rowsAffected > 0) {
+		            return true;
+		        }
+
+		    } catch (SQLException e) {
+		        System.err.println("Error while creating member: " + e.getMessage());
+		    }
+		return false;
 	}
 	
 }
