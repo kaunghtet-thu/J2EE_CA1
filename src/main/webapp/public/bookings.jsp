@@ -26,6 +26,13 @@
     BookingDAO bookingDAO = new BookingDAO();
 
     List<Booking> bookings = bookingDAO.getBookingsByMemberId((int)session.getAttribute("memberId"));
+    
+    
+    if (bookings == null || bookings.isEmpty()) {
+%>
+    <p class="succMsg">You don't have any booking yet.</p>
+<%
+    } else {
 %>
 
 <table border="1">
@@ -38,7 +45,7 @@
         <th width="400">Feedback</th>
         <th width="200">Actions</th>
     </tr>
-    <%
+    <%}
         for (Booking booking : bookings) {
             Feedback feedback = feedbackDAO.getFeedbackByBookingId(booking.getId());
             String statusName = statusDAO.getStatusName(booking.getStatusId());
@@ -58,7 +65,10 @@
             <%
                 } else if("Completed".equals(statusName)){
                     out.print("No Feedback Yet");
-                } 
+                } else {
+                	
+                    out.print("(Not Available)");
+                }
             %>
         </td>
         <td>

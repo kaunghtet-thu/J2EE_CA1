@@ -46,12 +46,15 @@
 	 	color: red;
 	    background-color: #fdecea;
 	    border: 1px solid red;
-	  }
-	  .editSuccess {
-	     color: green;
-	     background-color: #e7f9e7;
-	     border: 1px solid green;
-	  }
+   }
+   .editSuccess {
+	    color: green;
+	    background-color: #e7f9e7;
+	    border: 1px solid green;
+	}
+	button {
+            background-color: #E3EED4;
+        }
   
 </style>
 
@@ -78,12 +81,13 @@
 
     <%-- Dynamically populate the categories --%>
     <%
+
         ServiceCategoryDAO dao = new ServiceCategoryDAO();
         List<ServiceCategory> categories = dao.getAllServiceCategories();
 
         for (ServiceCategory category : categories) {
     %>
-        <div style="display: flex; align-items: center; margin-bottom: 50px;">
+        <div style="display: flex; align-items: center; margin-bottom: 30px;">
             <!-- Form for selecting the category -->
             <form action="services.jsp" method="POST" style="margin: 0; flex-grow: 1;">
                 <input type="hidden" name="categoryId" value="<%= category.getId() %>" />
@@ -104,14 +108,23 @@
         </div>
     <%
         }
-    %>
-</div>
+       if (isAdmin){ %>
+      	 <form action="AddNewServiceCategory" method="post">
+		    <fieldset>
+		      <legend>Add New Service Category</legend>
+		      <input type="text" name="serviceCategory" placeholder="Enter new service category" required>
+		      <button type="submit">Add</button>
+		    </fieldset>
+		  </form>
+      <%}%>
+   
+  </div>
 
 
   <div class="right-column">
   
   <%
-  int categoryIdFromLeftCol = request.getParameter("categoryId") != null ? Integer.parseInt(request.getParameter("categoryId")) : 1;
+  int categoryIdFromLeftCol = request.getParameter("categoryId") != null ? Integer.parseInt(request.getParameter("categoryId")) : categories.get(0).getId();
   String category = dao.getServiceCategoryById(categoryIdFromLeftCol).getName();
   %>
     <h2>Services under <%=category %></h2>
@@ -182,8 +195,6 @@
 					<% }%>
                 </tbody>
             </table>
-
-         
 
   </div>
 </div>
