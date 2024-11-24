@@ -102,13 +102,9 @@ try {
       defaultDate: "today" // Pre-select today's date
     });
   </script>
-  
-  
-	 <form action="showMemberBookings.jsp" method="GET">
-	    <button type="submit" class="btn btn-primary">
-	        See your bookings
-	    </button>
-	</form>
+  <button class="btn btn-primary" onclick="window.location.href='<%= request.getContextPath() %>/public/bookings.jsp';">
+     	See your bookings
+    </button>
 
     <%@include file="footer.html" %>
     

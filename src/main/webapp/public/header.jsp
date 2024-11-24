@@ -121,17 +121,17 @@
 <nav>
     <ul>
         <li><a href="index.jsp">Home</a></li>
-        <li><a href="index.jsp">Services</a></li>
+        <li><a href="services.jsp">Services</a></li>
         <% if (isMember){
         %>	
        
         <li><a href="cart.jsp">Cart</a></li>
-        <li><a href="showMemberBookings.jsp">Booking History</a></li>
+        <li><a href="bookings.jsp">Booking History</a></li>
         <% } %>
         <% if (isAdmin){
         %>	
        
-        <li><a href="#">Manage Service</a></li>
+
         <li><a href="displayAllMembers.jsp">Members</a></li>
         <li><a href="#">Feedback History</a></li>
         

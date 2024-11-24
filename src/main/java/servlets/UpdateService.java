@@ -37,17 +37,18 @@ public class UpdateService extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int serviceId = Integer.parseInt(request.getParameter("serviceId"));
-        String name = request.getParameter("name");
-        String description = request.getParameter("description");
-        double price = Double.parseDouble(request.getParameter("price"));
+        String name = request.getParameter("serviceName");
+        String description = request.getParameter("serviceDescription");
+        double price = Double.parseDouble(request.getParameter("servicePrice"));
+       System.out.print(serviceId + name + description + price + "  at servlet");
 
         ServiceDAO dao = new ServiceDAO();
         boolean isUpdated = dao.updateService(serviceId, name, description, price);
 
         if (isUpdated) {
-            response.sendRedirect("showServicesByCategory.jsp?categoryId=" + request.getSession().getAttribute("categoryId"));
+            response.sendRedirect("services.jsp?successMsg=Service updated successfully");
         } else {
-            response.sendRedirect("showServicesByCategory.jsp?errorMsg=Failed to update the service.");
+            response.sendRedirect("services.jsp?errorMsg=Failed to update the service.");
         }
     }
 	
