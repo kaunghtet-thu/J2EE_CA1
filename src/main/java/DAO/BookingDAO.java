@@ -11,7 +11,7 @@ public class BookingDAO {
 
     // Create: Add a new booking
     public boolean addBooking(Booking booking) {
-        String sql = "INSERT INTO booking (member_id, service_id, status_id, staff_id, booking_date, booking_time, booked_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO booking (member_id, service_id, status_id, staff_id, booking_date, booking_time, cleaning_hour, booked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseUtil.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
@@ -21,7 +21,8 @@ public class BookingDAO {
             stmt.setObject(4, booking.getStaffId(), Types.INTEGER); // Handle optional field
             stmt.setDate(5, Date.valueOf(booking.getBookingDate()));
             stmt.setTime(6, Time.valueOf(booking.getBookingTime()));
-            stmt.setTimestamp(7, Timestamp.valueOf(booking.getBookedAt()));
+            stmt.setInt(7, booking.getCleaningHour());
+            stmt.setTimestamp(8, Timestamp.valueOf(booking.getBookedAt()));
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {

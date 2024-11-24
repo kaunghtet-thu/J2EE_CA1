@@ -12,6 +12,7 @@ public class Booking {
     private Integer staffId;
     private LocalDate bookingDate;
     private LocalTime bookingTime;
+    private int cleaningHour;
     private LocalDateTime bookedAt;
 
     // Constructor, getters, and setters
@@ -25,21 +26,20 @@ public class Booking {
 		this.bookingTime = bookingTime;
 		this.bookedAt = bookedAt;
     }
-    public Booking(int memberId, int serviceId, int statusId, Integer staffId, LocalDate bookingDate, LocalTime bookingTime, LocalDateTime bookedAt) {
+    public Booking(int memberId, int serviceId, int statusId, Integer staffId, LocalDate bookingDate, LocalTime bookingTime, int cleaningHour, LocalDateTime bookedAt) {
     	this.memberId = memberId;
     	this.serviceId = serviceId;
     	this.statusId = statusId;
     	this.staffId = staffId;
     	this.bookingDate = bookingDate;
     	this.bookingTime = bookingTime;
+    	this.cleaningHour = cleaningHour;
     	this.bookedAt = bookedAt;
     }
 
 	public int getId() {
 		return id;
 	}
-
-	
 
 	public int getMemberId() {
 		return memberId;
@@ -89,6 +89,12 @@ public class Booking {
 		this.bookingTime = bookingTime;
 	}
 
+	public int getCleaningHour() {
+		return cleaningHour;
+	}
+	public void setCleaningHour(int cleaningHour) {
+		this.cleaningHour = cleaningHour;
+	}
 	public LocalDateTime getBookedAt() {
 		return bookedAt;
 	}

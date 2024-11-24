@@ -49,7 +49,6 @@ try {
 	<h2> You have chosen <%=name %>.</h2>
 	<form action="BookService" method="POST">
       <!-- Calendar Date Picker -->
-      <div class="mb-3">
         <label for="serviceDate" class="form-label">Preferred Date</label>
         <input 
           type="text" 
@@ -58,18 +57,34 @@ try {
           name="serviceDate" 
           placeholder="Select a date" 
           required>
-      </div>
       
-      <!-- Time Input -->
-      <div class="mb-3">
-        <label for="serviceTime" class="form-label">Preferred Time</label>
-        <input 
-          type="time" 
-          class="form-control" 
-          id="serviceTime" 
-          name="serviceTime" 
-          required>
-      </div>
+    <label for="serviceTime" class="form-label">Preferred Time</label>
+    <select class="form-control" id="serviceTime" name="serviceTime" required>
+      <% 
+        for (int hour = 7; hour <= 19; hour++) {
+          String time = String.format("%02d:00", hour);
+          String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
+      %>
+          <option value="<%= time %>"><%= displayTime %></option>
+      <% 
+        } 
+      %>
+    </select>
+
+      
+	      <!-- Cleaning Hour Dropdown -->
+	    <label for="cleaningHour" class="form-label">Cleaning Hour</label>
+	    <select class="form-control" id="cleaningHour" name="cleaningHour" required>
+	      <% 
+	        for (int i = 1; i <= 5; i++) {
+	      %>
+	        <option value="<%= i %>"><%= i %> hour</option>
+	      <% 
+	        } 
+	      %>
+	    </select>
+	
+	  
       
       <!-- Submit Button -->
       <button type="submit" class="btn btn-primary">Submit</button>
@@ -82,7 +97,7 @@ try {
   <script>
     // Initialize Flatpickr
     flatpickr("#serviceDate", {
-      dateFormat: "Y-m-d", // Customize format
+      dateFormat: "d-m-Y", // Customize format
       minDate: "today",    // Disable past dates
       defaultDate: "today" // Pre-select today's date
     });
