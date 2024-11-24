@@ -208,6 +208,9 @@
 	        <% 
 	            List<Address> addresses = memberInfo.getAddress();
 	            int index = 0;
+	            if(addresses.size()<=0) {
+	            	%><label>You don't have registered addresses yet</label> <%
+	            }
 	            for (Address address : addresses) { 
 	        %>
 	            <!-- Displaying the address number -->
