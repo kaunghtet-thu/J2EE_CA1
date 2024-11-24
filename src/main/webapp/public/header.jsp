@@ -120,7 +120,7 @@
         %>	
        
         <li><a href="cart.jsp">Cart</a></li>
-        <li><a href="showMemberBookings.jsp">Booking History</a></li>
+        <li><a href="bookings.jsp">Booking History</a></li>
         <% } %>
         <% if (isAdmin){
         %>	

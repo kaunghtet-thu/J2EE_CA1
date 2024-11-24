@@ -56,7 +56,7 @@ public class AddToCart extends HttpServlet {
 		List<Service> cart = (List<Service>) session.getAttribute("cart");
         if(cart == null) {
         	String error = "cart null";
-            response.sendRedirect("showServicesByCategory.jsp?errorMsg=" + error);
+            response.sendRedirect("services.jsp?errorMsg=" + error);
             return;
         }
         
@@ -66,7 +66,7 @@ public class AddToCart extends HttpServlet {
         	
             if (alreadyInCart) {
             	String error = "Already in the cart!";
-                response.sendRedirect("showServicesByCategory.jsp?errorMsg=" + error);
+                response.sendRedirect("services.jsp?errorMsg=" + error);
                 return;
             }
 

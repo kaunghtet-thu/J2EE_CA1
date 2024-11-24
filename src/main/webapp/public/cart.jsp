@@ -72,7 +72,7 @@
     <%
         }
     %>
-	<form action="showServicesByCategory.jsp" method="get">
+	<form action="services.jsp" method="get">
 	    <button type="submit">Continue Shopping</button>
 	</form>
     <%@include file="footer.html" %>

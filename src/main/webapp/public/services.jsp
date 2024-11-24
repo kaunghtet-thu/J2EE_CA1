@@ -42,12 +42,34 @@
     margin-bottom: 5px;
     border-radius: 5px;
   }
+  .editErr{
+	 	color: red;
+	    background-color: #fdecea;
+	    border: 1px solid red;
+	  }
+	  .editSuccess {
+	     color: green;
+	     background-color: #e7f9e7;
+	     border: 1px solid green;
+	  }
   
 </style>
 </head>
 <body>
 
 <%@include file="header.jsp" %>
+<%
+    String errorMessage = (String) request.getParameter("errorMsg");
+	String successMessage = (String) request.getParameter("successMsg");
+    if (errorMessage != null) {
+%>
+    <p class="editErr"><%= errorMessage %></p>
+<% } ;
+   if (successMessage != null) { %>
+   
+   <p class= "editSuccess"><%=successMessage%></p>
+<%} %>
+
 <div class="container">
   <!-- Left Column: Categories -->
   <div class="left-column">
@@ -60,7 +82,7 @@
         List<ServiceCategory> categories = dao.getAllServiceCategories();
 
         for (ServiceCategory category : categories) {
-      %>  <form action="showServiceByCategory.jsp?categoryId=<%= category.getId() %>" method="post">
+      %>  <form action="services.jsp?categoryId=<%= category.getId() %>" method="post">
               <div class="category">
                  <button class="categoryBtn">
                      <%= category.getName() %>
@@ -77,13 +99,15 @@
   <div class="right-column">
     <h2>Services</h2>
     <%
-    
+    int categoryIdFromLeftCol = request.getParameter("categoryId") != null ? Integer.parseInt(request.getParameter("categoryId")) : 1;
 
-   List<Service> services = (List<Service>) session.getAttribute("services");
+ 
+    	ServiceDAO serviceDao = new ServiceDAO();
+    	 List<Service> services  = serviceDao.getServicesByCategory(categoryIdFromLeftCol);
 
-        if (services != null && !services.isEmpty()) {
+   
+ 
     %>
-           <h3>Services </h3>
             <table border="1">
                 <thead>
                     <tr>
@@ -95,39 +119,43 @@
                     </tr>
                 </thead>
                 <tbody>
-<%
-                for (Service service : services) {
-%>
-                    <tr>
-                        <td><%= service.getName() %></td>
-                        <td><%= service.getDescription() %></td>
-                        <td><%= service.getPrice() %></td>
-                        <td><img src="images/cleaning.png" alt="<%= service.getName() %>" width="100" height="100"></td>
-                        <td>
-                            <form action="AddToCart" method="POST" style="display:inline;">
-                                <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
-                                <input type="submit" value="Add To Cart" />
-                            </form>
-                            <form action="bookAService.jsp" method="POST" style="display:inline;">
-                                <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
-                                <input type="hidden" name="serviceName" value="<%= service.getName() %>" />
-                                <input type="submit" value="Book" />
-                            </form>
-                        </td>
-                    </tr>
-<%
-                }
-%>
+				<% for (Service service : services) { %>
+					   <tr>
+					        <td><%= service.getName() %></td>
+					        <td><%= service.getDescription() %></td>
+					        <td><%= service.getPrice() %></td>
+					        <td>
+					            <img src="images/cleaning.png" alt="<%= service.getName() %>" width="100" height="100" />
+					        </td>
+					        <td> <% if (isMember) { %>
+					            <form action="AddToCart" method="POST" style="display:inline;">
+					                <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
+					                <input type="submit" value="Add To Cart" />
+					            </form>
+					            <form action="bookAService.jsp" method="POST" style="display:inline;">
+					                <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
+					                <input type="hidden" name="serviceName" value="<%= service.getName() %>" />
+					                <input type="submit" value="Book" />
+					            </form>
+					             <%} else if (isPublic) { %>
+					             <form action="login.jsp" method="POST" style="display:inline;">
+					                <input type="submit" value="Log in to book" />
+					             </form>
+					             <% } else if (isAdmin) { %>
+					             <form action="updateService.jsp" method="POST" style="display:inline;">
+					             	<input type="hidden" name="serviceId" value="<%= service.getId() %>" />
+					                <input type="submit" value="Manage" />
+					             </form>
+					           
+					             <%} %>
+					        </td>   
+						</tr>
+					
+					<% }%>
                 </tbody>
             </table>
-<%
-        } else {
-        	%>
-            <p>No category is selected.</p>
-        <%
-            }
-        %>
-        
+
+         
 
   </div>
 </div>
