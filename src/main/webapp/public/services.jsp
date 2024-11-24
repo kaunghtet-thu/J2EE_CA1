@@ -147,6 +147,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                <% if (isAdmin){ %>
                 <!-- Hidden Form Row -->
 			        <tr id="newServiceFormRow" class="hidden-form">
 			          <form action="AddNewService" method="POST">
@@ -158,14 +159,15 @@
 			            <td><input type="text" name="image" placeholder="Image Name" required /></td>
 			            <td><input type="submit" value="Add New Service" /></td>
 			          </form>
-			        </tr>
+			        </tr> 
+			        <%} %>
 				<% for (Service service : services) { %>
 					   <tr>
 					        <td><%= service.getName() %></td>
 					        <td><%= service.getDescription() %></td>
 					        <td><%= service.getPrice() %></td>
 					        <td>
-					            <img src="images/cleaning.png" alt="<%= service.getName() %>" width="100" height="100" />
+					            <img src="images/<%= service.getImage() %>" alt="<%= service.getName() %>" width="100" height="100" />
 					        </td>
 					        <td> <% if (isMember) { %>
 					            <form action="AddToCart" method="POST" style="display:inline;">
