@@ -97,9 +97,13 @@
 
 
   <div class="right-column">
-    <h2>Services</h2>
+  
+  <%
+  int categoryIdFromLeftCol = request.getParameter("categoryId") != null ? Integer.parseInt(request.getParameter("categoryId")) : 1;
+  String category = dao.getServiceCategoryById(categoryIdFromLeftCol).getName();
+  %>
+    <h2>Services under <%=category %></h2>
     <%
-    int categoryIdFromLeftCol = request.getParameter("categoryId") != null ? Integer.parseInt(request.getParameter("categoryId")) : 1;
 
  
     	ServiceDAO serviceDao = new ServiceDAO();

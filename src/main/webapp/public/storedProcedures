@@ -65,3 +65,18 @@ BEGIN
 END;
 $$;
 
+
+CREATE OR REPLACE FUNCTION get_feedback_service_member_name(p_feedback_id INT)
+RETURNS TABLE (feedback_id INT, service_name VARCHAR(100), member_name VARCHAR(100)) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT f.id, s.name, m.name
+    FROM feedback f
+    JOIN booking b ON b.id = f.booking_id
+    JOIN service s ON s.id = b.service_id
+    JOIN member m ON b.member_id = m.id
+    WHERE f.id = p_feedback_id;
+END;
+$$ LANGUAGE plpgsql;
+
+

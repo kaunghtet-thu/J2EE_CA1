@@ -133,7 +133,7 @@
        
 
         <li><a href="displayAllMembers.jsp">Members</a></li>
-        <li><a href="#">Feedback History</a></li>
+        <li><a href="feedback.jsp">Feedback History</a></li>
         
         <% } %>
     </ul>

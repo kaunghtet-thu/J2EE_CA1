@@ -1,6 +1,7 @@
 package DAO;
 
 import java.sql.*;
+import java.util.*;
 
 import DB.DatabaseUtil;
 import bean.Feedback;
@@ -19,7 +20,8 @@ public class FeedbackDAO {
                     rs.getInt("id"),
                     rs.getInt("booking_id"),
                     rs.getInt("rating"),
-                    rs.getString("comments")
+                    rs.getString("comments"),
+                    rs.getBoolean("display")
                 );
             }
         } catch (SQLException e) {
@@ -27,6 +29,48 @@ public class FeedbackDAO {
         }
         return feedback;
     }
+    
+    public ArrayList<Feedback> getFeedBackByDisplayTrue () {
+    	ArrayList<Feedback> feedbacks= new ArrayList<>();
+          String sql = "SELECT * FROM feedback WHERE display = TRUE ORDER BY rating desc";
+          try (Connection connection = DatabaseUtil.getConnection();
+          		PreparedStatement stmt = connection.prepareStatement(sql)) {
+              
+              ResultSet rs = stmt.executeQuery();
+              while (rs.next()) {
+                  feedbacks.add( new Feedback(
+                      rs.getInt("id"),
+                      rs.getInt("booking_id"),
+                      rs.getInt("rating"),
+                      rs.getString("comments"),
+                      rs.getBoolean("display")
+                  ));
+              }
+          } catch (SQLException e) {
+              e.printStackTrace();
+          }
+          return feedbacks;
+    }
+    
+    public String[] getServiceNameOfaFeedback(int id) {
+        String sql = "SELECT * FROM get_feedback_service_member_name(?)";
+        try (Connection connection = DatabaseUtil.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            String[] result = new String[2];
+            if (rs.next()) {
+                result[0] = rs.getString("member_name");
+                result[1] = rs.getString("service_name"); 
+                return result;
+            } 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;  
+    }
+
 
     // creat new  feedback
     public boolean addFeedback(int bookingId, int rating, String comments) {
@@ -67,4 +111,42 @@ public class FeedbackDAO {
         }
         return false;
     }
+    
+    public ArrayList<Feedback> getAllFeedback(boolean isAdmin) {
+        // Create an empty list to hold feedbacks
+        System.out.print("At DAO, isAdmin: " + isAdmin);  // Useful for debugging
+        
+        ArrayList<Feedback> allFeedbacks = new ArrayList<>();
+
+        // Check if user is an admin
+        if (isAdmin) {
+            String sql = "SELECT * FROM feedback";  // SQL query to get all feedback
+
+            try (Connection connection = DatabaseUtil.getConnection();
+                 PreparedStatement stmt = connection.prepareStatement(sql)) {
+                
+                ResultSet rs = stmt.executeQuery();
+                // Process the result set and populate the feedback list
+                while (rs.next()) {
+                    allFeedbacks.add(new Feedback(
+                            rs.getInt("id"),
+                            rs.getInt("booking_id"),
+                            rs.getInt("rating"),
+                            rs.getString("comments"),
+                            rs.getBoolean("display")
+                    ));
+                }
+                return allFeedbacks;  // Return the list of feedbacks
+            } catch (SQLException e) {
+                // Log the exception and rethrow as a runtime exception or handle as needed
+                e.printStackTrace();
+                throw new RuntimeException("Error fetching feedbacks from the database.", e);
+            }
+        } else {
+            // If not an admin, return an empty list (instead of null) to avoid NullPointerException
+            return new ArrayList<>(); 
+        }
+    }
+
+
 }
