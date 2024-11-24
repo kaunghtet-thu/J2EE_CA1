@@ -65,12 +65,24 @@
             background-color: #4cae4c;
             color: white;
         }
+        .editErr{
+	 	color: red;
+	    background-color: #fdecea;
+	    border: 1px solid red;
+	  }
+	  .editSuccess {
+	     color: green;
+	     background-color: #e7f9e7;
+	     border: 1px solid green;
+	  }
 </style>
 </head>
 <body>
 <%@include file="header.jsp" %>
 
 <%
+if (isAdmin) {
+	
   MemberDAO dao = new MemberDAO();
 	ArrayList<MemberInfo> members = dao.getAllMemberDetails(isAdmin);
 
@@ -89,8 +101,15 @@
 			}
             updateSuccess = dao.deleteMember(hiddenid, isAdmin);
             updateMessage = updateSuccess ? "Member deleted successfully!" : "Failed to delete member.";
-        }
-        out.print(updateMessage);
+        } if (updateSuccess) {
+        %> <div class="editSuccess">
+        	<%=updateMessage %>
+           </div>
+        <%} else {%>
+        	<div class="editErr">
+        	<%=updateMessage %>
+        	</div>
+        <%}
         members = dao.getAllMemberDetails(isAdmin);
     }
 %>
@@ -160,6 +179,9 @@
     </tbody>
 </table>
 </div>
+<%} else { %>
+<p style="color: red; font-weight: bold; font-size: 16px; text-align: center;">You are not authorized</p>
+<%} %>
 <%@include file="footer.html" %>
 </body>
 </html>

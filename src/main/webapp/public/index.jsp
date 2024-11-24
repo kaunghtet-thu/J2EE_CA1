@@ -12,14 +12,7 @@
 <title>SPOTLESS</title>
   <style>
     /* General page styling */
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-     
-    }
 
-    /* Section title */
     h1,h2 {
         text-align: center;
         font-size: 1.5em;
@@ -30,34 +23,9 @@
      text-align: center;
     }
 
-    /* Main container for the categories */
-    .category {
-        width: 80%;
-        max-width: 600px;
-        margin: 20px auto;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-
-    /* Individual category item styling */
-    .categoryItem {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 20px;
-        border-bottom: 1px solid #ddd;
-        font-size: 1.1em;
-        font-weight: bold;
-        color: #333;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
     .center {
     text-align: center;
-    font-family: Arial, sans-serif;
+  
     padding: 20px;
 	}
 	
@@ -70,7 +38,7 @@
 	}
 	
 	.carousel-item {
-		text-align: left;
+		text-align: center;
 	    border: 1px solid #ddd;
 	    border-radius: 5px;
 	    background-color:#c5d1ba;
@@ -101,10 +69,28 @@
     margin: 0;
     font-size: 14px;
 	}
-	.container {
+	.container{
+	text-align: center;
 	margin-top: 10px;
 	max-width: 40vw;
 	}
+	
+	.welcome-content {
+		max-width: 40vw;
+		margin: 0 auto;
+	}
+	.edit-button {
+            font-size: 14px;
+            padding: 5px 10px;
+            border: 1px solid grey;
+            background-color: #c5d1ba;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .edit-button:hover {
+            background-color: #4cae4c;
+            color: white;
+        }
 
 	
 
@@ -149,13 +135,13 @@
 </h1>
 
 
-<p>
+<p class="welcome-content">
     <%= contents.get(1) %>
     <% if (isAdmin) { %>
         <form action="editContent.jsp" method="post" style="display:inline;">
             <input type="hidden" name="contentId" value="2"> <!-- Adjust the index here -->
             <input type="hidden" name="content" value="<%= contents.get(1) %>">
-            <button type="submit" class="edit-button">Edit</button>
+            <button type="submit" class="edit-button" style="float: right;">Edit</button>
         </form>
     <% } %>
 </p>
@@ -253,7 +239,6 @@
         }
     %>
 </div>
-<h2></h2>
 <div>
 </div>
 </div>

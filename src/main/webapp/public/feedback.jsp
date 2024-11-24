@@ -53,7 +53,7 @@
 <body>
 <%@include file="header.jsp" %>
 
-<%
+<% if (isAdmin) {
     // Get all feedbacks assuming isAdmin is guaranteed (no need to check)
     FeedbackDAO dao = new FeedbackDAO();
     ArrayList<Feedback> allFeedbacks = dao.getAllFeedback(isAdmin); 
@@ -127,6 +127,9 @@
     </tbody>
 </table>
 </div>
+<%} else { %>
+<p style="color: red; font-weight: bold; font-size: 16px; text-align: center;">You are not authorized</p>
+<%} %>
 
 <%@include file="footer.html" %>
 </body>
