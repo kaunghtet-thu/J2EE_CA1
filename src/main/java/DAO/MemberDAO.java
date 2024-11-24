@@ -39,14 +39,10 @@ public class MemberDAO {
 	        }
 	        return null;
 	    }
-	  
-//	  private void setSessionKai(HttpSession session, int memberId) {
-//		  	Member member = returnMemberById(memberId);
-//		  	List<Service> cart = new ArrayList<>();
-//	        session.setAttribute("member", member);
-//	        session.setAttribute("memberId", member.getId());
-//	        session.setAttribute("cart", cart);
-//	  }
+
+
+	 
+
 
 
 	//======================================
