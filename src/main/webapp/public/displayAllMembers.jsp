@@ -14,30 +14,57 @@
         padding: 10px;
     }
 
-    table {
+	 table {
         width: 100%;
-        table-layout: fixed; /* Ensures table columns don't stretch beyond the container */
+        table-layout: fixed; 
         border-collapse: collapse;
+        margin: 0px;
     }
 
     th, td {
         padding: 10px;
         border: 1px solid #ddd;
-        word-wrap: break-word; /* Break long words into multiple lines */
+        word-wrap: break-word; 
     }
 
     th {
         background-color: #f4f4f4;
     }
 
-    /* Optional: Add a max-width to make sure it doesn’t stretch too wide */
-    .table-container table {
-        max-width: 90%;
+    th, td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        word-wrap: break-word; 
     }
 
-    .actions {
-        white-space: nowrap; /* Prevents buttons from breaking into multiple lines */
+    th {
+        background-color: #f4f4f4;
     }
+    .table-container table {
+        max-width: 100%;
+    }
+    .table-container, .header {
+	    display: flex;
+	    justify-content: center; 
+	    align-items: center; 
+	    width: 90%; 
+	}
+
+    .actions {
+        white-space: nowrap; 
+    }
+    .edit-button {
+            font-size: 14px;
+            padding: 5px 10px;
+            border: 1px solid grey;
+            background-color: #c5d1ba;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .edit-button:hover {
+            background-color: #4cae4c;
+            color: white;
+        }
 </style>
 </head>
 <body>
@@ -46,7 +73,6 @@
 <%
   MemberDAO dao = new MemberDAO();
 	ArrayList<MemberInfo> members = dao.getAllMemberDetails(isAdmin);
-	//ArrayList<Role> roleNames = dao.getRoleList();
 
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         String idParam = request.getParameter("id");
@@ -56,7 +82,6 @@
         boolean updateSuccess = false;
         String updateMessage = "";
 
-        // Check if the action is delete
         if (action != null && action.equals("delete")) {
 
 			if (!isAdmin) {
@@ -116,11 +141,11 @@
             <td>
 			    <form method="post" action="profile.jsp">
 			        <input type="hidden" name="id" value="<%= eachMember.getId() %>">
-			        <button type="submit" name="action" value="manage">Manage</button>
+			        <button type="submit" name="action" value="manage" class="edit-button">Manage</button>
 			    </form>
 			    <form method="post">
 			        <input type="hidden" name="id" value="<%= eachMember.getId() %>">
-			        <button type="submit" name="action" value="delete">Delete</button>
+			        <button type="submit" name="action" value="delete" class="edit-button">Delete</button>
 			    </form>
 			</td>
         </tr>
