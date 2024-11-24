@@ -36,19 +36,16 @@
         <li><a href="index.jsp">Home</a></li>
         <li><a href="services.jsp">Services</a></li>
         <% if (isMember){
-        %>	
-       
+        %>	       
         <li><a href="cart.jsp">Cart</a></li>
-        <li><a href="bookings.jsp">Booking History</a></li>
+         <li><a href="bookings.jsp">Booking History</a></li>
         <% } %>
         <% if (isAdmin){
         %>	
-       
-
         <li><a href="displayAllMembers.jsp">Members</a></li>
         <li><a href="feedback.jsp">Feedback History</a></li>
-        
         <% } %>
+      
     </ul>
 </nav>
 

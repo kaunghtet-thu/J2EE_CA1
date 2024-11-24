@@ -9,11 +9,10 @@
     <%@ include file="header.jsp" %>
 
     <%
-        // Retrieve the content and contentId from the form submission
+    if (isAdmin) {
         String contentId = request.getParameter("contentId");
         String content = request.getParameter("content");
 
-        // Retrieve error and success codes from the request parameters
         String editErr = request.getParameter("errorCode");
         String editSuccess = request.getParameter("successCode");
     %>
@@ -41,6 +40,8 @@
     </form>
 
     <%@ include file="footer.html" %>
-
+<%} else { %>
+<p style="color: red; font-weight: bold; font-size: 16px; text-align: center;">You are not authorized</p>
+<%} %>
 </body>
 </html>

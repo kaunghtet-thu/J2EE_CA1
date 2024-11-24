@@ -10,7 +10,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 80px; /* space to account for the header */
+            margin-top: 50px; /* space to account for the header */
         }
 
         .login-card {
@@ -20,13 +20,13 @@
             padding: 20px;
             width: 300px;
             text-align: center;
-            margin-bottom: 10px
+            margin-bottom:30px;
         }
 
         .login-card input[type="email"],
         .login-card input[type="password"],
         .login-card button {
-            width: 100%;
+            width: 80%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
