@@ -53,10 +53,12 @@
 <%
     // DAO and member information setup
     MemberDAO dao = new MemberDAO();
+
     ArrayList<Role> roleNames = dao.getRoleList();
 
     // Determine the current user ID
     int id = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : member.getId();
+
     int actorId = member.getId();
 
     // Fetch member details
@@ -133,7 +135,9 @@
                     updateMessage = "Invalid field specified.";
             }
         }
+
         memberInfo = dao.getMemberDetail(hiddenId); // Refresh member details
+
     }
 %>
 
@@ -145,6 +149,16 @@
             <strong><%= updateMessage %></strong>
         </div>
     <% } %>
+    <%
+    if (memberInfo == null) {
+%>
+    <div class="message error">
+        <strong>Error: Member details not found. Please check the Member ID.</strong>
+    </div>
+<%
+    } 
+    
+    %>
 
 	
     <fieldset>

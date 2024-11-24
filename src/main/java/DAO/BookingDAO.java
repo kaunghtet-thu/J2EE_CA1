@@ -29,6 +29,48 @@ public class BookingDAO {
             return false;
         }
     }
+    // Create: Add feedback to a booking
+
+    public boolean addFeedback(int bookingId, int rating, String comments) {
+        String sql = "SELECT add_feedback(?, ?, ?)";
+        try (Connection connection = DatabaseUtil.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql);
+        		) {
+
+            stmt.setInt(1, bookingId);
+            stmt.setInt(2, rating);
+            stmt.setString(3, comments);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean(1); // Get the returned boolean value from the function
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean deleteFeedback(int bookingId) {
+        String sql = "DELETE FROM feedback WHERE booking_id = ?";
+        
+        try (Connection connection = DatabaseUtil.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            
+            stmt.setInt(1, bookingId);
+            
+            // Execute the delete and check if any rows were affected
+            return stmt.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            // Log the error with a logging framework (e.g., log4j, SLF4J) instead of printing stack trace
+            System.err.println("Error deleting feedback for booking ID " + bookingId);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 
     // Read: Get all bookings
     public List<Booking> getAllBookings() {
@@ -70,24 +112,25 @@ public class BookingDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Booking booking = new Booking(
+                    bookings.add(new Booking(
                             rs.getInt("id"),
                             rs.getInt("member_id"),
                             rs.getInt("service_id"),
                             rs.getInt("status_id"),
-                            rs.getObject("staff_id", Integer.class),
+                            rs.getObject("staff_id", Integer.class),  // Handles null values
                             rs.getDate("booking_date").toLocalDate(),
                             rs.getTime("booking_time").toLocalTime(),
-                            rs.getTimestamp("booked_at").toLocalDateTime()
-                    );
-                    bookings.add(booking);
+                            rs.getTimestamp("booked_at").toLocalDateTime()));
                 }
             }
         } catch (SQLException e) {
+            // Log the exception (Optional)
+            System.err.println("Error while fetching bookings for member ID: " + memberId);
             e.printStackTrace();
         }
         return bookings;
     }
+
 
 
     // Update: Update booking status

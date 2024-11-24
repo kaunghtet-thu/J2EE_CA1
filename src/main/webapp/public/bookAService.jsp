@@ -47,7 +47,7 @@ try {
 		name = (String)session.getAttribute("serviceName");
 %>
 	<h2> You have chosen <%=name %>.</h2>
-	<form action="<%=request.getContextPath() %>/BookService" method="POST">
+	<form action="BookService" method="POST">
       <!-- Calendar Date Picker -->
       <div class="mb-3">
         <label for="serviceDate" class="form-label">Preferred Date</label>

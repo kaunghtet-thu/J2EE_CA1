@@ -48,18 +48,17 @@ public class AddToCart extends HttpServlet {
 	    ServiceDAO dao = new ServiceDAO();
 	    Service service = dao.getServiceById(id); // Implement this method to get the service
 
-	
-	    if (service == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid service ID");
-            return;
-        }
-
         // Get the current session
         HttpSession session = request.getSession();
 
         // Retrieve the cart from the session, or create a new one if it doesn't exist
         @SuppressWarnings("unchecked")
 		List<Service> cart = (List<Service>) session.getAttribute("cart");
+        if(cart == null) {
+        	String error = "cart null";
+            response.sendRedirect("showServicesByCategory.jsp?errorMsg=" + error);
+            return;
+        }
         
         	boolean alreadyInCart = false;
         	

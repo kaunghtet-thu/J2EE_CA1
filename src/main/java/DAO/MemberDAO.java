@@ -16,7 +16,7 @@ public class MemberDAO {
 	private final String TABLENAME3 = "role";
 	
 	  private void setSession(HttpSession session, Member member, int actorId) {
-		  if (member.getId()==actorId)
+		  if (member.getId() == actorId)
 	        session.setAttribute("member", member);
 	  }
 	  
@@ -35,6 +35,14 @@ public class MemberDAO {
 	        }
 	        return null;
 	    }
+
+	  private void setSessionKai(HttpSession session, int memberId) {
+		  	Member member = returnMemberById(memberId);
+		  	List<Service> cart = new ArrayList<>();
+	        session.setAttribute("member", member);
+	        session.setAttribute("memberId", member.getId());
+	        session.setAttribute("cart", cart);
+	  }
 
 
 	//======================================
@@ -140,6 +148,7 @@ public class MemberDAO {
 	
 	public void getMemberById(int id, HttpSession session, int actorId) {
 
+
         String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
         
         try (Connection connection = DatabaseUtil.getConnection();
@@ -203,7 +212,6 @@ public class MemberDAO {
 	    }
 	    return null;
 	}
-
 	
 	public ArrayList<MemberInfo> getAllMemberDetails (boolean isAdmin) {
 		ArrayList<MemberInfo> members = new ArrayList<MemberInfo>();
