@@ -16,13 +16,15 @@ public class MemberDAO {
 	private final String TABLENAME2 = "address";
 	
 	  private void setSession(HttpSession session, Member member, int actorId) {
-		  if (member.getId()==actorId)
+		  if (member.getId() == actorId)
 	        session.setAttribute("member", member);
 	  }
 	  
 	  private void setSessionKai(HttpSession session, int memberId) {
-	        session.setAttribute("member", returnMemberById(memberId));
-	        List<Service> cart = new ArrayList<>();
+		  	Member member = returnMemberById(memberId);
+		  	List<Service> cart = new ArrayList<>();
+	        session.setAttribute("member", member);
+	        session.setAttribute("memberId", member.getId());
 	        session.setAttribute("cart", cart);
 	  }
 
@@ -110,7 +112,7 @@ private Member returnMemberById(int id) {
     }
 
 	
-	private void getMemberById(int id, HttpSession session) {
+	private void getMemberById(int id, HttpSession session, int actorId) {
 
         String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
         
@@ -135,51 +137,102 @@ private Member returnMemberById(int id) {
         }
     }
 	
-	public MemberInfo getMemberDetail (int id) {
-		String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
-		
-		  try (Connection connection = DatabaseUtil.getConnection();
-		             PreparedStatement stmt = connection.prepareStatement(sql)) {
-		            
-		            stmt.setInt(1, id);
-		       
-		            ResultSet rs = stmt.executeQuery();
-		            
-		            if (rs.next()) {
-		                String name = rs.getString("name");
-		                int role_id = rs.getInt("role_id");
-		                String email = rs.getString("email");
-		                String phone = rs.getString("phone");
-		                ArrayList<Address> address = new ArrayList<Address>();
-		                //==================================================================================
-		                // Second sql to get the address list
-		                //==================================================================================
-		                String sql2 = String.format("Select * from %s WHERE member_id = ?", TABLENAME2);
-		                try (Connection connection2 = DatabaseUtil.getConnection();
-		                        PreparedStatement stmt2 = connection2.prepareStatement(sql2)) {
-			                       stmt2.setInt(1, id);
-			                       ResultSet rs2 = stmt2.executeQuery();
-			                       
-			                       System.out.println(rs2);
-			                       
-			                       while (rs2.next()) {
-			                    	   int addressid = rs2.getInt("id");
-			                    	   String addressStr = rs2.getString("address");
-			                          address.add(new Address(addressid,addressStr));
-			                       }   
-			            } catch (SQLException e) {
-			              	   e.printStackTrace();
-			            }  
-		                
-		                MemberInfo member = new MemberInfo (id, name, role_id, email, phone, address);
-		                return member;
-		            }
-		            
-		        } catch (SQLException e) {
-		            e.printStackTrace();
-		        }
-		  return null;
+//	public MemberInfo getMemberDetail (int id) {
+//		String sql = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
+//		
+//		  try (Connection connection = DatabaseUtil.getConnection();
+//		             PreparedStatement stmt = connection.prepareStatement(sql)) {
+//		            
+//		            stmt.setInt(1, id);
+//		       
+//		            ResultSet rs = stmt.executeQuery();
+//		            
+//		            if (rs.next()) {
+//		                String name = rs.getString("name");
+//		                int role_id = rs.getInt("role_id");
+//		                String email = rs.getString("email");
+//		                String phone = rs.getString("phone");
+//		                ArrayList<Address> address = new ArrayList<Address>();
+//		                //==================================================================================
+//		                // Second sql to get the address list
+//		                //==================================================================================
+//		                String sql2 = String.format("Select * from %s WHERE member_id = ?", TABLENAME2);
+//		                try (Connection connection2 = DatabaseUtil.getConnection();
+//		                        PreparedStatement stmt2 = connection2.prepareStatement(sql2)) {
+//			                       stmt2.setInt(1, id);
+//			                       ResultSet rs2 = stmt2.executeQuery();
+//			                       
+//			                       System.out.println(rs2);
+//			                       
+//			                       while (rs2.next()) {
+//			                    	   int addressid = rs2.getInt("id");
+//			                    	   String addressStr = rs2.getString("address");
+//			                          address.add(new Address(addressid,addressStr));
+//			                       }   
+//			            } catch (SQLException e) {
+//			              	   e.printStackTrace();
+//			            }  
+//		                
+//		                MemberInfo member = new MemberInfo (id, name, role_id, email, phone, address);
+//		                return member;
+//		            }
+//		            
+//		        } catch (SQLException e) {
+//		            e.printStackTrace();
+//		        }
+//		  return null;
+//	}
+	public MemberInfo getMemberDetail(int id) {
+	    String memberQuery = String.format("SELECT * FROM %s WHERE id = ?", this.tableName);
+	    String addressQuery = String.format("SELECT * FROM %s WHERE member_id = ?", TABLENAME2);
+
+	    System.out.println("Fetching member details for ID: " + id); // Debugging
+
+	    try (Connection connection = DatabaseUtil.getConnection();
+	         PreparedStatement memberStmt = connection.prepareStatement(memberQuery);
+	         PreparedStatement addressStmt = connection.prepareStatement(addressQuery)) {
+
+	        // Fetch Member Details
+	        memberStmt.setInt(1, id);
+	        try (ResultSet memberRs = memberStmt.executeQuery()) {
+	            if (memberRs.next()) {
+	                System.out.println("Member found in database."); // Debugging
+
+	                // Extract Member details
+	                String name = memberRs.getString("name");
+	                int roleId = memberRs.getInt("role_id");
+	                String email = memberRs.getString("email");
+	                String phone = memberRs.getString("phone");
+
+	                // Fetch Address List
+	                ArrayList<Address> addresses = new ArrayList<>();
+	                addressStmt.setInt(1, id);
+	                try (ResultSet addressRs = addressStmt.executeQuery()) {
+	                    while (addressRs.next()) {
+	                        int addressId = addressRs.getInt("id");
+	                        String addressStr = addressRs.getString("address");
+	                        addresses.add(new Address(addressId, addressStr));
+	                    }
+	                }
+
+	                System.out.println("Returning member details."); // Debugging
+	                return new MemberInfo(id, name, roleId, email, phone, addresses);
+	            } else {
+	                System.out.println("No member found for ID: " + id); // Debugging
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        System.err.println("Error fetching member details for ID: " + id);
+	        e.printStackTrace();
+	    }
+
+	    // Return null if no member is found
+	    System.out.println("Returning null for ID: " + id); // Debugging
+	    return null;
 	}
+
+
 	
 	public ArrayList<MemberInfo> getAllMemberDetails (boolean isAdmin) {
 		ArrayList<MemberInfo> members = new ArrayList<MemberInfo>();

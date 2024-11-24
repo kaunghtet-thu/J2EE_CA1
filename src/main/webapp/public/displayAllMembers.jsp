@@ -60,7 +60,7 @@
             </td>
             <td>
 			    <form method="post" action="profile.jsp">
-			        <input type="hidden" name="memberId" value="<%= eachMember.getId() %>">
+			        <input type="hidden" name="id" value="<%= eachMember.getId() %>">
 			        <button type="submit" name="action" value="manage">Manage</button>
 			    </form>
 			    <form method="post" action="MemberController">

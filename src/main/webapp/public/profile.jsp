@@ -59,7 +59,7 @@
 
 <%
     MemberDAO dao = new MemberDAO();
-    int id = request.getParameter("memberId") != null ? Integer.parseInt(request.getParameter("memberId")) : ((Member)session.getAttribute("member")).getId();
+    int id = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : ((Member)session.getAttribute("member")).getId();
     int actorId = member.getId();
     out.println("id of member" + id);
 	out.println("id of actor" + actorId);
@@ -103,7 +103,7 @@
             }
         }
         memberInfo = dao.getMemberDetail(hiddenid);
-        dao.getMemberById(id, session,actorId);
+        //dao.getMemberById(id, session, actorId);
     }
     
     if ("POST".equalsIgnoreCase(request.getMethod())) {
@@ -183,6 +183,16 @@
             <strong><%= updateMessage %></strong>
         </div>
     <% } %>
+    <%
+    if (memberInfo == null) {
+%>
+    <div class="message error">
+        <strong>Error: Member details not found. Please check the Member ID.</strong>
+    </div>
+<%
+    } 
+    
+    %>
 
     <fieldset>
         <legend>Name:</legend>

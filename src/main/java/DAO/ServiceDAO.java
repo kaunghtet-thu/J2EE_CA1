@@ -108,26 +108,41 @@ public class ServiceDAO {
     }
 
     // Update: Update an existing service
-    public boolean updateService(Service service, int id) {
-        String sql = "UPDATE service SET name = ?, description = ?, category_id = ?, price = ?, image = ? WHERE id = ?";
-
-        try (Connection connection = DatabaseUtil.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            
-            stmt.setString(1, service.getName());
-            stmt.setString(2, service.getDescription());
-            stmt.setInt(3, service.getCategoryId());
-            stmt.setDouble(4, service.getPrice());
-            stmt.setString(5, service.getImage());
-            stmt.setInt(6, id);
-            int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
-            
+    public boolean updateService(int serviceId, String name, String description, double price) {
+        String sql = "UPDATE service SET name = ?, description = ?, price = ? WHERE id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setString(2, description);
+            stmt.setDouble(3, price);
+            stmt.setInt(4, serviceId);
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
+
+//    public boolean updateService(Service service, int id) {
+//        String sql = "UPDATE service SET name = ?, description = ?, category_id = ?, price = ?, image = ? WHERE id = ?";
+//
+//        try (Connection connection = DatabaseUtil.getConnection();
+//             PreparedStatement stmt = connection.prepareStatement(sql)) {
+//            
+//            stmt.setString(1, service.getName());
+//            stmt.setString(2, service.getDescription());
+//            stmt.setInt(3, service.getCategoryId());
+//            stmt.setDouble(4, service.getPrice());
+//            stmt.setString(5, service.getImage());
+//            stmt.setInt(6, id);
+//            int rowsUpdated = stmt.executeUpdate();
+//            return rowsUpdated > 0;
+//            
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
     // Delete: Delete a service by ID
     public boolean deleteService(int id) {
