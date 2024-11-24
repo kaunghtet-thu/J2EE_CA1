@@ -18,6 +18,10 @@
             top: 0;
             z-index: 1000;
         }
+        body {
+        	margin: 0; /* Remove default margin */
+            padding-bottom: 50px; /* Ensure content doesn't overlap footer */
+        }
         .header-title {
             font-size: 32px;
             margin: 0;
@@ -65,7 +69,9 @@
             display: flex;
             background-color: #c5d1ba;
             padding: 10px 0;
-            margin-top: 10px;
+            margin-top: 0;
+            position: sticky;
+            top: 0;
         }
         nav ul {
             list-style-type: none;

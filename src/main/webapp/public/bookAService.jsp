@@ -105,8 +105,7 @@ try {
   <button class="btn btn-primary" onclick="window.location.href='<%= request.getContextPath() %>/public/bookings.jsp';">
      	See your bookings
     </button>
-   
-   
+
     <%@include file="footer.html" %>
     
 </body>
