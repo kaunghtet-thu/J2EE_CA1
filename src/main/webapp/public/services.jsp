@@ -156,7 +156,7 @@
 			            <td><input type="text" name="serviceName" placeholder="Service Name" required /></td>
 			            <td><input type="text" name="serviceDescription" placeholder="Description" required /></td>
 			            <td><input type="number" name="servicePrice" placeholder="Price" step="0.01" required /></td>
-			            <td><input type="text" name="image" placeholder="Image Name" required /></td>
+			            <td><input type="text" name="image" placeholder="Image Name" disabled /></td>
 			            <td><input type="submit" value="Add New Service" /></td>
 			          </form>
 			        </tr> 

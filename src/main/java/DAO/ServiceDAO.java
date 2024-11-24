@@ -20,7 +20,7 @@ public class ServiceDAO {
             stmt.setString(2, service.getDescription());
             stmt.setInt(3, service.getCategoryId());
             stmt.setDouble(4, service.getPrice());
-            stmt.setString(5, service.getImage());
+            stmt.setString(5, "cleaning.png");
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
             
