@@ -95,10 +95,11 @@ public class BookingDAO {
                 );
                 bookings.add(booking);
             }
+            return bookings;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return bookings;
+        return null;
     }
     
     public List<Booking> getBookingsByMemberId(int memberId) {

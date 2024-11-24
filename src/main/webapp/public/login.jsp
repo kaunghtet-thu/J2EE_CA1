@@ -10,7 +10,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 80px; /* space to account for the header */
+            margin-top: 50px; /* space to account for the header */
         }
 
         .login-card {
@@ -20,13 +20,13 @@
             padding: 20px;
             width: 300px;
             text-align: center;
-            margin-bottom: 10px
+            margin-bottom:30px;
         }
 
         .login-card input[type="email"],
         .login-card input[type="password"],
         .login-card button {
-            width: 100%;
+            width: 80%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
@@ -63,15 +63,20 @@
 <%@include file="header.jsp" %>
 <%
     String message = request.getParameter("errCode");
-    if(message != null && message.equals("invalidLogin")) {
-        out.print("<h3>Email or password incorrect. Please try again!</h3><br>");        
-    } 
-    
     String successMessage = request.getParameter("successMessage");
-    if(successMessage != null && successMessage.equals("Registration successful, please login.")) {
-    	out.print("<h3>" +successMessage+ "</h3>");
-    }
 %>
+
+<% if (message != null && message.equals("invalidLogin")) { %>
+    <div class="editErr">
+        Email or password incorrect. Please try again!
+    </div>
+<% } %>
+
+<% if (successMessage != null && successMessage.equals("Registration successful, please login.")) { %>
+    <div class="editSuccess">
+        <%= successMessage %>
+    </div>
+<% } %>
     <div class="container">
         <div class="login-card">
             <h2>Login to your account</h2>

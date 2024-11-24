@@ -1,17 +1,18 @@
 <%@ page import="bean.Booking, bean.Feedback, DAO.FeedbackDAO, DAO.StatusDAO, DAO.ServiceDAO, DAO.BookingDAO" %>
-<%@ page import="java.util.List" %>
+<%@ page import="java.util.*" %>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Edit Content</title>
+    <title>Bookings</title>
 </head>
 <body>
     <%@ include file="header.jsp" %>
     <%@ include file="successError.jsp" %>
 
 <%
+if (isMember){
     String message = (String) session.getAttribute("message");
     if (message != null) {
 %>
@@ -24,7 +25,6 @@
     StatusDAO statusDAO = new StatusDAO();
     ServiceDAO serviceDAO = new ServiceDAO();
     BookingDAO bookingDAO = new BookingDAO();
-
     List<Booking> bookings = bookingDAO.getBookingsByMemberId((int)session.getAttribute("memberId"));
     
     
@@ -33,6 +33,7 @@
     <p class="succMsg">You don't have any booking yet.</p>
 <%
     } else {
+
 %>
 
 <table border="1">
@@ -46,13 +47,16 @@
         <th width="200">Actions</th>
     </tr>
     <%}
+
         for (Booking booking : bookings) {
             Feedback feedback = feedbackDAO.getFeedbackByBookingId(booking.getId());
             String statusName = statusDAO.getStatusName(booking.getStatusId());
+            int serviceid = booking.getServiceId();
+         
     %>
     <tr>
         <td><%= booking.getId() %></td>
-        <td><%= serviceDAO.getServiceById(booking.getServiceId()).getName() %></td>
+        <td><%= serviceDAO.getServiceById(serviceid).getName() %></td>
         <td><%= statusName %></td>
         <td><%= booking.getBookingDate() %></td>
         <td><%= booking.getBookingTime() %></td>
@@ -100,7 +104,7 @@
         </td>
     </tr>
     <%
-        }
+        }}
     %>
 </table>
 
@@ -138,6 +142,10 @@
 <%
     }
 %>
+
+<%} else { %>
+<p style="color: red; font-weight: bold; font-size: 16px; text-align: center;">You are not authorized</p>
+<%} %>
 <%@ include file="footer.html" %>
 
 </body>
