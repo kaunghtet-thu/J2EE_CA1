@@ -8,6 +8,7 @@ public class Booking {
     private int id;
     private int memberId;
     private int serviceId;
+    private int address_id;
     private int statusId;
     private Integer staffId;
     private LocalDate bookingDate;
@@ -26,9 +27,10 @@ public class Booking {
 		this.bookingTime = bookingTime;
 		this.bookedAt = bookedAt;
     }
-    public Booking(int memberId, int serviceId, int statusId, Integer staffId, LocalDate bookingDate, LocalTime bookingTime, int cleaningHour, LocalDateTime bookedAt) {
+    public Booking(int memberId, int serviceId, int address_id, int statusId, Integer staffId, LocalDate bookingDate, LocalTime bookingTime, int cleaningHour, LocalDateTime bookedAt) {
     	this.memberId = memberId;
     	this.serviceId = serviceId;
+    	this.address_id = address_id;
     	this.statusId = statusId;
     	this.staffId = staffId;
     	this.bookingDate = bookingDate;
@@ -102,7 +104,14 @@ public class Booking {
 	public void setBookedAt(LocalDateTime bookedAt) {
 		this.bookedAt = bookedAt;
 	}
-
+	public int getAddress_id() {
+		return address_id;
+	}
+	public void setAddress_id(int address_id) {
+		this.address_id = address_id;
+	}
+	
+	
     // Getters and setters here
     
 }

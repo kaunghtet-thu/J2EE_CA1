@@ -57,6 +57,7 @@
         }
   
 </style>
+
 </head>
 <body>
 
@@ -78,21 +79,36 @@
   <div class="left-column">
     <h2>Service Categories</h2>
 
-      <%
-        // Assume categories is a list of Category objects
+    <%-- Dynamically populate the categories --%>
+    <%
+
         ServiceCategoryDAO dao = new ServiceCategoryDAO();
         List<ServiceCategory> categories = dao.getAllServiceCategories();
 
         for (ServiceCategory category : categories) {
-      %>  <form action="services.jsp?categoryId=<%= category.getId() %>" method="post">
-              <div class="category">
-                 <button class="categoryBtn">
-                     <%= category.getName() %>
-                 </button>
-              </div>
-          </form>
-      <%
+    %>
+        <div style="display: flex; align-items: center; margin-bottom: 50px;">
+            <!-- Form for selecting the category -->
+            <form action="services.jsp" method="POST" style="margin: 0; flex-grow: 1;">
+                <input type="hidden" name="categoryId" value="<%= category.getId() %>" />
+                <button type="submit" class="categoryBtn" style="width: 100%; text-align: left; padding: 10px; border: none; background-color: #f2f2f2; border-radius: 5px;">
+                    <%= category.getName() %>
+                </button>
+            </form>
+
+            <% if (isAdmin) { %>
+                <!-- Form for deleting the category -->
+                <form action="DeleteCategory" method="POST" style="margin: 0; margin-left: 10px;">
+                    <input type="hidden" name="categoryId" value="<%= category.getId() %>" />
+                    <button type="submit" style="background-color: red; color: white; border: none; padding: 10px; border-radius: 5px;">
+                        Delete
+                    </button>
+                </form>
+            <% } %>
+        </div>
+    <%
         }
+
       %>
       <% if (isAdmin){ %>
       	 <form action="AddNewServiceCategory" method="post">
@@ -119,10 +135,9 @@
  
     	ServiceDAO serviceDao = new ServiceDAO();
     	 List<Service> services  = serviceDao.getServicesByCategory(categoryIdFromLeftCol);
-
-   
+    	  
+    	  %>
  
-    %>
             <table border="1">
                 <thead>
                     <tr>
@@ -134,6 +149,18 @@
                     </tr>
                 </thead>
                 <tbody>
+                <!-- Hidden Form Row -->
+			        <tr id="newServiceFormRow" class="hidden-form">
+			          <form action="AddNewService" method="POST">
+			          
+			            <input type="hidden" name="categoryIdFromLeftCol" value="<%=categoryIdFromLeftCol %>" />
+			            <td><input type="text" name="serviceName" placeholder="Service Name" required /></td>
+			            <td><input type="text" name="serviceDescription" placeholder="Description" required /></td>
+			            <td><input type="number" name="servicePrice" placeholder="Price" step="0.01" required /></td>
+			            <td><input type="text" name="image" placeholder="Image Name" required /></td>
+			            <td><input type="submit" value="Add New Service" /></td>
+			          </form>
+			        </tr>
 				<% for (Service service : services) { %>
 					   <tr>
 					        <td><%= service.getName() %></td>

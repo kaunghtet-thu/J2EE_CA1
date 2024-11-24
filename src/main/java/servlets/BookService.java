@@ -51,22 +51,33 @@ public class BookService extends HttpServlet {
 			
 			Member member = (Member) session.getAttribute("member");
 			String serviceIdStr = (String) session.getAttribute("serviceId");
+			String serviceName = (String) session.getAttribute("serviceName");
 			int serviceId = Integer.parseInt(serviceIdStr);
 			LocalDate bookingDate = LocalDate.parse(request.getParameter("serviceDate"));
 	        LocalTime bookingTime = LocalTime.parse(request.getParameter("serviceTime"));
 	        int cleaningHour = Integer.parseInt(request.getParameter("cleaningHour"));
+	        int addressId = Integer.parseInt(request.getParameter("addressId"));
+	        String servicePrice = (String)session.getAttribute("servicePrice");
 	        
 	        
 	        String action = request.getParameter("action");
 
 	        if ("update".equals(action)) {
 	        	
-	        	response.sendRedirect("bookAService.jsp?cleaningHour="+ request.getParameter("cleaningHour"));
-	            
+	        	String redirectURL = "bookAService.jsp"
+	        	        + "?serviceDate=" + request.getParameter("serviceDate")
+	        	        + "&serviceTime=" + request.getParameter("serviceTime")
+	        	        + "&cleaningHour=" + cleaningHour
+	        	        + "&addressId=" + addressId
+	        	        + "&serviceId=" + serviceId
+	        	        + "&servicePrice=" + servicePrice;
+
+	        	    response.sendRedirect(redirectURL);
+	        	    return;
 	        	
 	        } else {
 	        	BookingDAO dao = new BookingDAO();
-	        	boolean success = dao.addBooking(new Booking(member.getId(), serviceId, 1, null, bookingDate, bookingTime, cleaningHour, LocalDateTime.now()));
+	        	boolean success = dao.addBooking(new Booking(member.getId(), serviceId, addressId, 1, null, bookingDate, bookingTime, cleaningHour, LocalDateTime.now()));
 	        	if(success) {
 	        		List<Service> cart = (List<Service>) session.getAttribute("cart");
 	        		
@@ -88,12 +99,12 @@ public class BookService extends HttpServlet {
 	        e.printStackTrace(); // Optionally log to a file or logging system
 	        response.sendRedirect("bookAService.jsp?errormsg=An error occurred: " + e.getMessage());
 	     }
-//		catch (Exception e) {
-//	        // Catch any other unexpected exceptions
-//	        e.printStackTrace(); // Optionally log to a file or logging system
-//	        System.out.print(e.getMessage());
-//	        response.sendRedirect("bookAService.jsp?cleaningHour="+ request.getParameter("cleaningHour"));
-//	    }
+		catch (Exception e) {
+	        // Catch any other unexpected exceptions
+	        e.printStackTrace(); // Optionally log to a file or logging system
+	        System.out.print(e.getMessage());
+	        response.sendRedirect("bookAService.jsp?errMsg=exception");
+	    }
 		
 	}
 

@@ -11,13 +11,20 @@
 <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
 </head>
 <body>
+<%@page import="java.util.List" %>
+<%@page import="DAO.MemberDAO" %>
 <%@include file="header.jsp" %>
 <%@include file="successError.jsp" %>
 
 <%
+	int memberId = (int)session.getAttribute("memberId");
+	MemberDAO memberDAO = new MemberDAO();
+	List<Address> addresses = (List<Address>)memberDAO.getAddressByMemberId(memberId);
+	
 String serviceId = request.getParameter("serviceId");
 String name = request.getParameter("serviceName");
 String price = request.getParameter("servicePrice");
+String addressId = request.getParameter("addressId");
 int cleaningHour = 1; // Default cleaning hour
 double totalAmount = 0.0;
 
@@ -25,10 +32,12 @@ if (serviceId != null) {
     session.setAttribute("serviceId", serviceId);
     session.setAttribute("serviceName", name);
     session.setAttribute("servicePrice", price);
+    session.setAttribute("addressId", addressId);
 } else {
 	serviceId = (String) session.getAttribute("serviceId");
     name = (String) session.getAttribute("serviceName");
     price = (String) session.getAttribute("servicePrice");
+    addressId = (String) session.getAttribute("addressId");
 }
 
 if (request.getParameter("cleaningHour") != null) {
@@ -58,11 +67,31 @@ if (request.getParameter("cleaningHour") != null) {
             String time = String.format("%02d:00", hour);
             String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
         %>
-            <option value="<%= time %>"><%= displayTime %></option>
+                        <option value="<%= time %>" <%= (time.equals(request.getParameter("serviceTime")) ? "selected" : "") %>><%= displayTime %></option>
+            
         <% 
         } 
         %>
     </select>
+    <label for="address">Select Address:</label>
+    <select name="addressId" id="address" class="form-control" required>
+	    <option value="" disabled selected>Select your address</option>
+	    <%
+	        // Ensure the 'addresses' attribute is a List of Address objects passed from the servlet
+	        if (addresses != null) {
+	            for (Address address : addresses) {
+	    %>
+	                <option value="<%= address.getId() %>"><%= address.getAddress() %></option>
+	    <%
+	            }
+	        } else {
+	    %>
+	            <option value="" disabled>No addresses available</option>
+	    <%
+	        }
+	    %>
+	</select>
+
 
     <!-- Cleaning Hour Dropdown -->
     <label for="cleaningHour" class="form-label">Cleaning Hour</label>

@@ -253,6 +253,29 @@ public class MemberDAO {
 
 	    return members;
 	}
+	public List<Address> getAddressByMemberId (int memberId) {
+		List<Address> addresses = new ArrayList<>();
+		String sql = String.format("SELECT * FROM address where member_id = ?");
+		
+		try (Connection connection = DatabaseUtil.getConnection();
+	         PreparedStatement stmt = connection.prepareStatement(sql)) {
+			
+			stmt.setInt(1, memberId);
+			ResultSet rs = stmt.executeQuery();
+			
+			
+			while (rs.next()) {
+				int addressid = rs.getInt("id");
+				String addressStr = rs.getString("address");
+				addresses.add(new Address(addressid,addressStr));
+			}   
+			return addresses;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}  
+		return null;
+	}
+	
 
 
 	public boolean loginMember(String email, String password, HttpSession session) {
