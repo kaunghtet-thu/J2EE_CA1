@@ -97,16 +97,19 @@ try {
   <script>
     // Initialize Flatpickr
     flatpickr("#serviceDate", {
-      dateFormat: "d-m-Y", // Customize format
+      dateFormat: "Y-m-d", // Customize format
       minDate: "today",    // Disable past dates
       defaultDate: "today" // Pre-select today's date
     });
   </script>
-  <button 
-      class="btn btn-primary" 
-      onclick="window.location.href='<%= request.getContextPath() %>/public/showMemberBookings.jsp';">
-     	See your bookings
-    </button>
+  
+  
+	 <form action="showMemberBookings.jsp" method="GET">
+	    <button type="submit" class="btn btn-primary">
+	        See your bookings
+	    </button>
+	</form>
+
     <%@include file="footer.html" %>
     
 </body>
