@@ -11,13 +11,9 @@
 </head>
 <body>
 
-
 <%
-
-
 String email = request.getParameter("email");
 String password = request.getParameter("password");
-
 
 MemberDAO dao = new MemberDAO();
 //dao.loginMember(email, password, session);

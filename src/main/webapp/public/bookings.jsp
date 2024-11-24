@@ -1,7 +1,15 @@
 <%@ page import="bean.Booking, bean.Feedback, DAO.FeedbackDAO, DAO.StatusDAO, DAO.ServiceDAO, DAO.BookingDAO" %>
 <%@ page import="java.util.List" %>
 
-<%@ include file="header.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Content</title>
+</head>
+<body>
+    <%@ include file="header.jsp" %>
+    <%@ include file="successError.jsp" %>
 
 <%
     String message = (String) session.getAttribute("message");
@@ -23,12 +31,12 @@
 <table border="1">
     <tr>
         <th>ID</th>
-        <th>Service</th>
-        <th>Status</th>
-        <th>Booking Date</th>
-        <th>Booking Time</th>
-        <th>Feedback</th>
-        <th>Actions</th>
+        <th width="400">Service</th>
+        <th width="50">Status</th>
+        <th width="100">Booking Date</th>
+        <th width="50">Booking Time</th>
+        <th width="400">Feedback</th>
+        <th width="200">Actions</th>
     </tr>
     <%
         for (Booking booking : bookings) {
@@ -120,3 +128,7 @@
 <%
     }
 %>
+<%@ include file="footer.html" %>
+
+</body>
+</html>

@@ -15,16 +15,16 @@
         List<Service> cart = (List<Service>) session.getAttribute("cart");
         if (cart == null || cart.isEmpty()) {
     %>
-        <p>Your cart is empty.</p>
+        <p class="succMsg">Your cart is empty.</p>
     <%
         } else {
     %>
         <table border="1">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price</th>
+                    <th width="300">Name</th>
+                    <th width="600">Description</th>
+                    <th width="80">Price</th>
                     <th>Action</th>
                 </tr>
             </thead>

@@ -88,7 +88,7 @@ public class ManageBooking extends HttpServlet {
 	        }
 
 
-	        RequestDispatcher dispatcher = request.getRequestDispatcher("services.jsp");
+	        RequestDispatcher dispatcher = request.getRequestDispatcher("bookings.jsp");
 	        dispatcher.forward(request, response);
 	    }
 	

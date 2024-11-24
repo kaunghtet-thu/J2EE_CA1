@@ -45,31 +45,56 @@ public class BookService extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
 		
-		Member member = (Member) session.getAttribute("member");
-		int serviceId = (int)session.getAttribute("serviceId");
-		LocalDate bookingDate = LocalDate.parse(request.getParameter("serviceDate"));
-        LocalTime bookingTime = LocalTime.parse(request.getParameter("serviceTime"));
-        int cleaningHour = Integer.parseInt(request.getParameter("cleaningHour"));
-        // Get the current session
-		BookingDAO dao = new BookingDAO();
-		boolean success = dao.addBooking(new Booking(member.getId(), serviceId, 1, null, bookingDate, bookingTime, cleaningHour, LocalDateTime.now()));
-        	
-		if(success) {
-			List<Service> cart = (List<Service>) session.getAttribute("cart");
+		try {
+			HttpSession session = request.getSession();
+			
+			Member member = (Member) session.getAttribute("member");
+			String serviceIdStr = (String) session.getAttribute("serviceId");
+			int serviceId = Integer.parseInt(serviceIdStr);
+			LocalDate bookingDate = LocalDate.parse(request.getParameter("serviceDate"));
+	        LocalTime bookingTime = LocalTime.parse(request.getParameter("serviceTime"));
+	        int cleaningHour = Integer.parseInt(request.getParameter("cleaningHour"));
+	        
+	        
+	        String action = request.getParameter("action");
 
-		    if (cart != null) {
-		        int serviceIdToRemove = serviceId; // Replace with actual ID or logic to get it
-		        cart.removeIf(service -> service.getId() == serviceIdToRemove);
-
-		        // Update the cart in the session
-		        session.setAttribute("cart", cart);
-		    }
-			response.sendRedirect("bookAService.jsp?successMsg=Booked successfully!");   //
-		}
-		else
-			response.sendRedirect("bookAService.jsp?errormsg=Booked failed.");
+	        if ("update".equals(action)) {
+	        	
+	        	response.sendRedirect("bookAService.jsp?cleaningHour="+ request.getParameter("cleaningHour"));
+	            
+	        	
+	        } else {
+	        	BookingDAO dao = new BookingDAO();
+	        	boolean success = dao.addBooking(new Booking(member.getId(), serviceId, 1, null, bookingDate, bookingTime, cleaningHour, LocalDateTime.now()));
+	        	if(success) {
+	        		List<Service> cart = (List<Service>) session.getAttribute("cart");
+	        		
+	        		if (cart != null) {
+	        			int serviceIdToRemove = serviceId; // Replace with actual ID or logic to get it
+	        			cart.removeIf(service -> service.getId() == serviceIdToRemove);
+	        			
+	        			// Update the cart in the session
+	        			session.setAttribute("cart", cart);
+	        		}
+	        		response.sendRedirect("bookAService.jsp?successMsg=Booked successfully!");
+	        	}
+	        	else
+	        		response.sendRedirect("bookAService.jsp");
+	        }
+	        	
+		} catch (NullPointerException e) {
+	        // Log the error and send an appropriate response
+	        e.printStackTrace(); // Optionally log to a file or logging system
+	        response.sendRedirect("bookAService.jsp?errormsg=An error occurred: " + e.getMessage());
+	     }
+//		catch (Exception e) {
+//	        // Catch any other unexpected exceptions
+//	        e.printStackTrace(); // Optionally log to a file or logging system
+//	        System.out.print(e.getMessage());
+//	        response.sendRedirect("bookAService.jsp?cleaningHour="+ request.getParameter("cleaningHour"));
+//	    }
+		
 	}
 
 }

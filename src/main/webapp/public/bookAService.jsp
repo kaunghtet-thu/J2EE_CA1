@@ -6,93 +6,108 @@
 <meta charset="UTF-8">
 <title>Cleaning Service Booking</title>
 <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Flatpickr CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Flatpickr CSS -->
+<link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
 </head>
 <body>
 <%@include file="header.jsp" %>
+<%@include file="successError.jsp" %>
 
 <%
-try {
-    String serviceId = request.getParameter("serviceId");
-    int id;
+String serviceId = request.getParameter("serviceId");
+String name = request.getParameter("serviceName");
+String price = request.getParameter("servicePrice");
+int cleaningHour = 1; // Default cleaning hour
+double totalAmount = 0.0;
 
-    if (serviceId != null) {
-        id = Integer.parseInt(serviceId);
-        session.setAttribute("serviceId", id);
-    } else if (session.getAttribute("categoryId") != null) {
-        id = (Integer) session.getAttribute("serviceId");
-    }
-} catch (NumberFormatException e) {
-    out.println("<p style='color: red;'>Invalid service ID format. Please try again.</p>");
+if (serviceId != null) {
+    session.setAttribute("serviceId", serviceId);
+    session.setAttribute("serviceName", name);
+    session.setAttribute("servicePrice", price);
+} else {
+	serviceId = (String) session.getAttribute("serviceId");
+    name = (String) session.getAttribute("serviceName");
+    price = (String) session.getAttribute("servicePrice");
 }
 
-    String errorMessage = (String) request.getParameter("errorMsg");
-    String successMessage = (String) request.getParameter("successMsg");
-    if (errorMessage != null) {
+if (request.getParameter("cleaningHour") != null) {
+    cleaningHour = Integer.parseInt(request.getParameter("cleaningHour"));
+    totalAmount = Double.parseDouble(price) * cleaningHour;
+} else
+	totalAmount = Double.parseDouble(price);
 %>
-    <p style="color: red;"><%= errorMessage %></p>
-<%
-    }
-    if (successMessage != null) {
-%>
-    <p style="color: green;"><%= successMessage %></p>
-<%
-    }
-	String name = request.getParameter("serviceName");
-	if(name != null)
-		session.setAttribute("serviceName", name);
-	else
-		name = (String)session.getAttribute("serviceName");
-%>
-	<h2> You have chosen <%=name %>.</h2>
-	<form action="BookService" method="POST">
-      <!-- Calendar Date Picker -->
-        <label for="serviceDate" class="form-label">Preferred Date</label>
-        <input 
-          type="text" 
-          id="serviceDate" 
-          class="form-control" 
-          name="serviceDate" 
-          placeholder="Select a date" 
-          required>
-      
+
+<h2>You have chosen <%= name %>.</h2>
+
+<form action="BookService" method="POST">
+    <!-- Calendar Date Picker -->
+    <label for="serviceDate" class="form-label">Preferred Date</label>
+    <input 
+        type="text" 
+        id="serviceDate" 
+        class="form-control" 
+        name="serviceDate" 
+        placeholder="Select a date" 
+        required>
+
     <label for="serviceTime" class="form-label">Preferred Time</label>
     <select class="form-control" id="serviceTime" name="serviceTime" required>
-      <% 
+        <% 
         for (int hour = 7; hour <= 19; hour++) {
-          String time = String.format("%02d:00", hour);
-          String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
-      %>
-          <option value="<%= time %>"><%= displayTime %></option>
-      <% 
+            String time = String.format("%02d:00", hour);
+            String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
+        %>
+            <option value="<%= time %>"><%= displayTime %></option>
+        <% 
         } 
-      %>
+        %>
     </select>
 
-      
-	      <!-- Cleaning Hour Dropdown -->
-	    <label for="cleaningHour" class="form-label">Cleaning Hour</label>
-	    <select class="form-control" id="cleaningHour" name="cleaningHour" required>
-	      <% 
-	        for (int i = 1; i <= 5; i++) {
-	      %>
-	        <option value="<%= i %>"><%= i %> hour</option>
-	      <% 
-	        } 
-	      %>
-	    </select>
-	
-	  
-      
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    <!-- Cleaning Hour Dropdown -->
+    <label for="cleaningHour" class="form-label">Cleaning Hour</label>
+    
+      <select class="form-control" id="cleaningHour" name="cleaningHour" onchange="setActionAndSubmit();">
+        
+        <% 
+        for (int i = 1; i <= 5; i++) {
+        %>
+            <option value="<%= i %>" <%= (i == cleaningHour) ? "selected" : "" %>>
+                <%= i %> hour<%= i > 1 ? "s" : "" %>
+            </option>
+        <% 
+        } 
+        %>
+    </select>
 
-  <!-- Bootstrap JS -->
+    <!-- Display Total Amount -->
+    <div class="mt-3">
+        <label for="totalAmount" class="form-label"><strong>Total Amount:</strong></label>
+        <input 
+            type="text" 
+            id="totalAmount" 
+            class="form-control" 
+            value="SGD <%= String.format("%.2f", totalAmount) %>" 
+            readonly>
+    </div>
+    
+    <!-- Hidden field to differentiate submit source 
+    <input type="hidden" id="submitSource" name="submitSource" value="button"> -->
+    
+    <!-- Hidden field to identify the action -->
+    <input type="hidden" name="action" id="action" value="lee">
+    
+    <!-- Submit Button --><br>
+    <button type="submit" >Submit Booking</button> <br>
+
+</form>
+    <form action="bookings.jsp" method="POST" style="display:inline;">
+		 <input type="submit" value="Go To Bookings Page" />
+	</form>
+
+<!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Flatpickr JS -->
+  <!-- Flatpicker JS -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
     // Initialize Flatpickr
@@ -101,15 +116,12 @@ try {
       minDate: "today",    // Disable past dates
       defaultDate: "today" // Pre-select today's date
     });
+  function setActionAndSubmit() {
+	    document.getElementById("action").value = "update";  // This will indicate we are just updating the total amount
+        document.forms[0].submit();  // Automatically submit the form to refresh the total amount
+	}
   </script>
-  <button class="btn btn-primary" onclick="window.location.href='<%= request.getContextPath() %>/public/bookings.jsp';">
-     	See your bookings
-    </button>
-
-    <%@include file="footer.html" %>
-    
+  
+<%@include file="footer.html" %>
 </body>
 </html>
-
-
-
