@@ -46,12 +46,15 @@
 	 	color: red;
 	    background-color: #fdecea;
 	    border: 1px solid red;
-	  }
-	  .editSuccess {
-	     color: green;
-	     background-color: #e7f9e7;
-	     border: 1px solid green;
-	  }
+   }
+   .editSuccess {
+	    color: green;
+	    background-color: #e7f9e7;
+	    border: 1px solid green;
+	}
+	button {
+            background-color: #E3EED4;
+        }
   
 </style>
 
@@ -78,6 +81,7 @@
 
     <%-- Dynamically populate the categories --%>
     <%
+
         ServiceCategoryDAO dao = new ServiceCategoryDAO();
         List<ServiceCategory> categories = dao.getAllServiceCategories();
 
@@ -104,8 +108,19 @@
         </div>
     <%
         }
-    %>
-</div>
+
+      %>
+      <% if (isAdmin){ %>
+      	 <form action="AddNewServiceCategory" method="post">
+		    <fieldset>
+		      <legend>Add New Service Category</legend>
+		      <input type="text" name="serviceCategory" placeholder="Enter new service category" required>
+		      <button type="submit">Add</button>
+		    </fieldset>
+		  </form>
+      <%} %>
+   
+  </div>
 
 
   <div class="right-column">

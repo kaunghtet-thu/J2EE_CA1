@@ -10,7 +10,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 80px; /* space to account for the header */
+            margin-top: 50px; /* space to account for the header */
         }
 
         .register-card {
@@ -20,7 +20,7 @@
             padding: 20px;
             width: 300px;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
         }
 
         .register-card input[type="text"],
@@ -28,7 +28,7 @@
         .register-card input[type="password"],
         .register-card input[type="tel"],
         .register-card button {
-            width: 100%;
+            width: 80%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
