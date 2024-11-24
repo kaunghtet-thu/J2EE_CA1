@@ -87,7 +87,7 @@
 
         for (ServiceCategory category : categories) {
     %>
-        <div style="display: flex; align-items: center; margin-bottom: 50px;">
+        <div style="display: flex; align-items: center; margin-bottom: 30px;">
             <!-- Form for selecting the category -->
             <form action="services.jsp" method="POST" style="margin: 0; flex-grow: 1;">
                 <input type="hidden" name="categoryId" value="<%= category.getId() %>" />
@@ -108,9 +108,7 @@
         </div>
     <%
         }
-
-      %>
-      <% if (isAdmin){ %>
+       if (isAdmin){ %>
       	 <form action="AddNewServiceCategory" method="post">
 		    <fieldset>
 		      <legend>Add New Service Category</legend>
@@ -118,7 +116,7 @@
 		      <button type="submit">Add</button>
 		    </fieldset>
 		  </form>
-      <%} %>
+      <%}%>
    
   </div>
 
@@ -126,7 +124,7 @@
   <div class="right-column">
   
   <%
-  int categoryIdFromLeftCol = request.getParameter("categoryId") != null ? Integer.parseInt(request.getParameter("categoryId")) : 1;
+  int categoryIdFromLeftCol = request.getParameter("categoryId") != null ? Integer.parseInt(request.getParameter("categoryId")) : categories.get(0).getId();
   String category = dao.getServiceCategoryById(categoryIdFromLeftCol).getName();
   %>
     <h2>Services under <%=category %></h2>
@@ -197,8 +195,6 @@
 					<% }%>
                 </tbody>
             </table>
-
-         
 
   </div>
 </div>
