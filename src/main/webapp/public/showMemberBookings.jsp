@@ -27,7 +27,6 @@
         <th>Status</th>
         <th>Booking Date</th>
         <th>Booking Time</th>
-        <th>Booked At</th>
         <th>Feedback</th>
         <th>Actions</th>
     </tr>
@@ -42,7 +41,6 @@
         <td><%= statusName %></td>
         <td><%= booking.getBookingDate() %></td>
         <td><%= booking.getBookingTime() %></td>
-        <td><%= booking.getBookedAt() %></td>
         <td>
             <%
                 if (feedback != null) {

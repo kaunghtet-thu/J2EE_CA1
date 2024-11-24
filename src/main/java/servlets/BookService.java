@@ -51,9 +51,10 @@ public class BookService extends HttpServlet {
 		int serviceId = (int)session.getAttribute("serviceId");
 		LocalDate bookingDate = LocalDate.parse(request.getParameter("serviceDate"));
         LocalTime bookingTime = LocalTime.parse(request.getParameter("serviceTime"));
+        int cleaningHour = Integer.parseInt(request.getParameter("cleaningHour"));
         // Get the current session
 		BookingDAO dao = new BookingDAO();
-		boolean success = dao.addBooking(new Booking(member.getId(), serviceId, 1, null, bookingDate, bookingTime, LocalDateTime.now()));
+		boolean success = dao.addBooking(new Booking(member.getId(), serviceId, 1, null, bookingDate, bookingTime, cleaningHour, LocalDateTime.now()));
         	
 		if(success) {
 			List<Service> cart = (List<Service>) session.getAttribute("cart");

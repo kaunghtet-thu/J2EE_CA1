@@ -16,8 +16,12 @@ public class MemberDAO {
 	private final String TABLENAME3 = "role";
 	
 	  private void setSession(HttpSession session, Member member, int actorId) {
-		  if (member.getId() == actorId)
-	        session.setAttribute("member", member);
+		  if (member.getId() == actorId) {
+			  List<Service> cart = new ArrayList<>();
+              session.setAttribute("cart", cart);
+			  session.setAttribute("member", member);
+			  session.setAttribute("memberId", member.getId());
+		  }
 	  }
 	  
 
@@ -36,7 +40,9 @@ public class MemberDAO {
 	        return null;
 	    }
 
+
 	 
+
 
 
 	//======================================
@@ -156,8 +162,7 @@ public class MemberDAO {
                 int role_id = rs.getInt("role_id");
                 Member member = new Member(id, name, role_id);
                 setSession(session, member, actorId);
-                List<Service> cart = new ArrayList<>();
-                session.setAttribute("cart", cart);
+                
 
             }
             
@@ -268,7 +273,14 @@ public class MemberDAO {
 	            if (rs.next()) {
 	                // Retrieve member details
 	                int id = rs.getInt("id");
-	                getMemberById(id, session, id);
+	                String name = rs.getString("name");
+	                int roleId = rs.getInt("role_id");
+
+	                // Create Member object
+	                Member member = new Member(id, name, roleId);
+
+	                // Set session attributes
+	                setSession(session, member, id);
 	                return true;
 	            }
 	        }
