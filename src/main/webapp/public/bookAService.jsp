@@ -73,6 +73,21 @@ if (request.getParameter("cleaningHour") != null) {
         } 
         %>
     </select>
+    <!-- Cleaning Hour Dropdown -->
+    <label for="cleaningHour" class="form-label">Cleaning Hour</label>
+    
+      <select class="form-control" id="cleaningHour" name="cleaningHour" onchange="setActionAndSubmit();">
+        
+        <% 
+        for (int i = 1; i <= 5; i++) {
+        %>
+            <option value="<%= i %>" <%= (i == cleaningHour) ? "selected" : "" %>>
+                <%= i %> hour<%= i > 1 ? "s" : "" %>
+            </option>
+        <% 
+        } 
+        %>
+    </select>
     <label for="address">Select Address:</label>
     <select name="addressId" id="address" class="form-control" required>
 	    <option value="" disabled selected>Select your address</option>
@@ -93,21 +108,7 @@ if (request.getParameter("cleaningHour") != null) {
 	</select>
 
 
-    <!-- Cleaning Hour Dropdown -->
-    <label for="cleaningHour" class="form-label">Cleaning Hour</label>
     
-      <select class="form-control" id="cleaningHour" name="cleaningHour" onchange="setActionAndSubmit();">
-        
-        <% 
-        for (int i = 1; i <= 5; i++) {
-        %>
-            <option value="<%= i %>" <%= (i == cleaningHour) ? "selected" : "" %>>
-                <%= i %> hour<%= i > 1 ? "s" : "" %>
-            </option>
-        <% 
-        } 
-        %>
-    </select>
 
     <!-- Display Total Amount -->
     <div class="mt-3">
