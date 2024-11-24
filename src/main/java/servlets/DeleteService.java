@@ -43,7 +43,7 @@ public class DeleteService extends HttpServlet {
         boolean isDeleted = dao.deleteService(serviceId);
 
         if (isDeleted) {
-            response.sendRedirect("services.jsp");
+            response.sendRedirect("services.jsp?successMsg=Service deleted!");
         } else {
             response.sendRedirect("services.jsp?errorMsg=Failed to delete the service.");
         }
