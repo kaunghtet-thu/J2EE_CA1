@@ -18,11 +18,14 @@
     }
 
     /* Section title */
-    h2 {
+    h1,h2 {
         text-align: center;
         font-size: 1.5em;
         margin-top: 20px;
         color: #333;
+    }
+    p{
+     text-align: center;
     }
 
     /* Main container for the categories */
@@ -75,68 +78,117 @@
     text-align: center;
     font-family: Arial, sans-serif;
     padding: 20px;
-}
-
-.category-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.category-item {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f8f9fa;
-    padding: 10px;
-    transition: background-color 0.3s, transform 0.2s;
-    cursor: pointer;
-}
-
-.category-item:hover {
-    background-color: #e9ecef;
-    transform: translateY(-2px);
-}
-
-.category-link {
-    all: unset; /* Reset button styles */
-    font-size: 16px;
-    font-weight: bold;
-    color: #007bff;
-    cursor: pointer;
-    text-align: left;
-    display: block;
-    width: 100%;
-    transition: color 0.3s;
-}
-
-.category-link:hover {
-    color: #0056b3;
-}
+	}
+	
+	.category-list {
+	    display: flex;
+	    flex-direction: column;
+	    gap: 10px;
+	    max-width: 400px;
+	    margin: 0 auto;
+	}
+	
+	.category-item {
+	    border: 1px solid #ddd;
+	    border-radius: 5px;
+	    background-color: #f8f9fa;
+	    padding: 10px;
+	    transition: background-color 0.3s, transform 0.2s;
+	    cursor: pointer;
+	}
+	
+	.category-item:hover {
+	    background-color: #e9ecef;
+	    transform: translateY(-2px);
+	}
+	
+	.category-link {
+	    all: unset; /* Reset button styles */
+	    font-size: 16px;
+	    font-weight: bold;
+	    color: #007bff;
+	    cursor: pointer;
+	    text-align: left;
+	    display: block;
+	    width: 100%;
+	    transition: color 0.3s;
+	}
+	
+	.category-link:hover {
+	    color: #0056b3;
+	}
+	.editErr{
+	 	color: red;
+	    background-color: #fdecea;
+	    border: 1px solid red;
+	  }
+	  .editSuccess {
+	     color: green;
+	     background-color: #e7f9e7;
+	     border: 1px solid green;
+	  }
     
 </style>
 
 </head>
 <body>
 <%@include file="header.jsp" %>
+<%
+	IndexDAO indexDao = new IndexDAO();
+	ArrayList<String> contents = indexDao.getContent();
+	 String editErr = request.getParameter("errorCode");
+	    String editSuccess = request.getParameter("successCode");
+	    if (editErr != null && editErr.equals("editErr")) {
+		
+	%>
+		<div class="editErr">
+			<p>Error editing the selected field</p>
+		</div>
+		<%} 
+		
+		if (editSuccess != null && editSuccess.equals("editSuccess")) {
+
+		%>
+		<div class="editSuccess">
+			<p>Editing the selected field successful</p>
+		</div>
+		<%} %>
 
 
-<h1>Welcome from SPOTLESS</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<h1>
+    <%= contents.get(0) %>
+    <% if (isAdmin) { %>
+        <form action="editContent.jsp" method="post" style="display:inline;">
+            <input type="hidden" name="contentId" value="1">
+            <input type="hidden" name="content" value ="<%=contents.get(0) %>">
+            <button type="submit" class="edit-button">Edit</button>
+        </form>
+    <% } %>
+</h1>
+
+
+<p>
+    <%= contents.get(1) %>
+    <% if (isAdmin) { %>
+        <form action="editContent.jsp" method="post" style="display:inline;">
+            <input type="hidden" name="contentId" value="2"> <!-- Adjust the index here -->
+            <input type="hidden" name="content" value="<%= contents.get(1) %>">
+            <button type="submit" class="edit-button">Edit</button>
+        </form>
+    <% } %>
 </p>
-<h2>Book a service in 4 steps</h2>
-<table border="1">
-	<tr>
-		<td>1. Pick a service </td>
-		<td>2. Choose date and time</td>
-		<td>3. Confirm address</td>
-		<td>4. Checkout</td>
-	</tr>
-</table>
 
  <div class="center">
-    <h1>All Service Categories</h1>
+	<h2>
+	    <%= contents.get(2) %>
+	    <% if (isAdmin) { %>
+	        <form action="editContent.jsp" method="post" style="display:inline;">
+	            <input type="hidden" name="contentId" value="3"> <!-- Adjust the index here -->
+	            <input type="hidden" name="content" value="<%= contents.get(2) %>">
+	            <button type="submit" class="edit-button">Edit</button>
+	        </form>
+	    <% } %>
+	</h2>
     <%
     
         ServiceCategoryDAO dao = new ServiceCategoryDAO();
@@ -149,11 +201,9 @@
         <%
             for (ServiceCategory category : allCategories) {
         %>
-        <!-- Each category item -->
         <form action="showServicesByCategory.jsp" method="post" class="category-item">
-            <!-- Hidden input to send categoryId -->
             <input type="hidden" name="categoryId" value="<%= category.getId() %>">
-            <!-- Clickable category name -->
+
             <button type="submit" class="category-link">
                 <%= category.getName() %>
             </button>
@@ -170,9 +220,9 @@
         }
     %>
 </div>
-
-
-
+<h2></h2>
+<div>
+</div>
 
 <%@ include file="footer.html" %>
 </body>

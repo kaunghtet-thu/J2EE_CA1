@@ -1,0 +1,67 @@
+################################################################
+Update member email 
+################################################################
+CREATE OR REPLACE PROCEDURE update_member_email(
+    IN member_id INT,
+    IN new_email TEXT,
+    IN actor_id INT,
+    OUT success BOOLEAN
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+    email_exists BOOLEAN;
+BEGIN
+    -- Check if the email is already in use by another member
+    SELECT EXISTS (
+        SELECT 1
+        FROM member
+        WHERE email = new_email AND id != member_id
+    ) INTO email_exists;
+
+    IF email_exists THEN
+        success := FALSE;
+    ELSE
+        -- Update the email if not in use
+        UPDATE member
+        SET email = new_email
+        WHERE id = member_id AND id = actor_id;
+
+        success := (FOUND); -- Set success to TRUE if the row was updated
+    END IF;
+END;
+$$;
+
+
+################################################################
+Update member name
+################################################################
+CREATE OR REPLACE PROCEDURE update_member_name(
+    IN member_id INT,
+    IN new_name TEXT,
+    IN actor_id INT,
+    OUT success BOOLEAN
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+    name_exists BOOLEAN;
+BEGIN
+    -- Check if the name is already in use by another member
+    SELECT EXISTS (
+        SELECT 1
+        FROM member
+        WHERE name = new_name AND id != member_id
+    ) INTO name_exists;
+
+    IF name_exists THEN
+        success := FALSE;
+    ELSE
+        -- Update the name if not in use
+        UPDATE member
+        SET name = new_name
+        WHERE id = member_id AND id = actor_id;
+
+        success := (FOUND); -- Set success to TRUE if the row was updated
+    END IF;
+END;
+$$;
+
