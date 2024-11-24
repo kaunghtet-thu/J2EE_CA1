@@ -120,10 +120,15 @@
 </head>
 <body>
 <%@include file="header.jsp" %>
-
+<%
+	
+%>
 
 <h1>Welcome from SPOTLESS</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<p> Welcome to Spotless Cleaning Services!<br></p>
+<p>
+Where cleanliness meets excellence. Whether it's your home, office, or any space in need of a refresh, we're here to make it shine. Our professional team is dedicated to delivering spotless results with every clean. Let us handle the mess so you can enjoy a pristine, worry-free environment.  
+Book your first clean today and experience the sparkle!
 </p>
 <h2>Book a service in 4 steps</h2>
 <table border="1">

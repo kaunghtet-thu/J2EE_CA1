@@ -281,28 +281,33 @@ public class MemberDAO {
 	// UPDATE 
 	//======================================
 	public boolean updateMemberName(int id, String name, int actorId, HttpSession session) {
-	    String sql = String.format("UPDATE %s SET name = ? WHERE id = ?", this.tableName);
-	    
-	    try (Connection connection = DatabaseUtil.getConnection();
-	         PreparedStatement stmt = connection.prepareStatement(sql)) {
+	    String sql = "CALL update_member_name(?, ?, ?, ?)";
 
-	        // Set parameters
-	        stmt.setString(1, name);
-	        stmt.setInt(2, id);
-	 
-	        
-	        // Execute update
-	        int rowsAffected = stmt.executeUpdate();
-	        if (rowsAffected > 0) {
-	            // If update is successful, fetch the updated member details
-	        	getMemberById(id, session, actorId);
-	        	return true;
+	    try (Connection connection = DatabaseUtil.getConnection();
+	         CallableStatement stmt = connection.prepareCall(sql)) {
+
+	        // Set input parameters
+	        stmt.setInt(1, id);
+	        stmt.setString(2, name);
+	        stmt.setInt(3, actorId);
+
+
+	        stmt.registerOutParameter(4, java.sql.Types.BOOLEAN);
+	        stmt.execute();
+
+	        boolean isSuccess = stmt.getBoolean(4);
+
+	        if (isSuccess) {
+	            getMemberById(id, session, actorId);
 	        }
+	        return isSuccess;
+
 	    } catch (SQLException e) {
 	        System.err.println("Error while updating member name: " + e.getMessage());
+	        return false;
 	    }
-	    return false;
 	}
+
 	
 	public boolean updateMemberPhone(int id, String phone) {
 	    String sql = String.format("UPDATE %s SET phone = ? WHERE id = ?", this.tableName);
@@ -368,25 +373,24 @@ public class MemberDAO {
 	
 	// Admin cannot edit the user email and password
 	public boolean updateMemberEmail(int id, String email, int actorId) {
-	    String sql = String.format("UPDATE %s SET email = ? WHERE id = ? AND id = ? ", this.tableName);
-	    
+	    String sql = "CALL update_member_email(?, ?, ?, ?)";
+
 	    try (Connection connection = DatabaseUtil.getConnection();
-	         PreparedStatement stmt = connection.prepareStatement(sql)) {
+	         CallableStatement stmt = connection.prepareCall(sql)) {
 
-	        // Set parameters
-	        stmt.setString(1, email); 
-	        stmt.setInt(2, id);      
-	        stmt.setInt(3, actorId);   
-
-	        // Execute update
-	        int rowsAffected = stmt.executeUpdate();
-	        return rowsAffected > 0; 
+	        stmt.setInt(1, id);
+	        stmt.setString(2, email);
+	        stmt.setInt(3, actorId);
+	        stmt.registerOutParameter(4, java.sql.Types.BOOLEAN);
+	        stmt.execute();
+	        return stmt.getBoolean(4);
 
 	    } catch (SQLException e) {
 	        System.err.println("Error while updating member email: " + e.getMessage());
 	        return false;
 	    }
 	}
+
 	// Admin cannot edit the user email and password
 	public boolean updateMemberPassword (int id, String hashedNewPassword, String hashedOldPassword) {
 		 String sql = String.format("UPDATE %s SET password = ? WHERE password = ? AND id = ?", this.tableName);
