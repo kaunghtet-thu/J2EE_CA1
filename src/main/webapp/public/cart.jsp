@@ -42,11 +42,25 @@
                             <input type="hidden" name="serviceId" value="<%= service.getId() %>">
                             <button type="submit">Delete</button>
                         </form>
+                        <%
+                        if(isPublic) {
+                        %>
+                        
+                        <form action="login.jsp" method="POST" style="display:inline;">
+                            <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
+                            <input type="hidden" name="serviceName" value="<%= service.getName() %>" />
+                            <input type="submit" value="Book" />
+                        </form>
+                        <%	
+                        } else {
+                        %>
                         <form action="bookAService.jsp" method="POST" style="display:inline;">
                             <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
                             <input type="hidden" name="serviceName" value="<%= service.getName() %>" />
                             <input type="submit" value="Book" />
                         </form>
+                        <% }
+                        %>
                     </td>
                 </tr>
                 <%

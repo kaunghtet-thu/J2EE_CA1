@@ -21,7 +21,7 @@ import bean.Service;
 /**
  * Servlet implementation class BookService
  */
-@WebServlet("/BookService")
+@WebServlet("/public/BookService")
 public class BookService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -65,10 +65,10 @@ public class BookService extends HttpServlet {
 		        // Update the cart in the session
 		        session.setAttribute("cart", cart);
 		    }
-			response.sendRedirect("public/bookAService.jsp?successMsg=Booked successfully!");   //
+			response.sendRedirect("bookAService.jsp?successMsg=Booked successfully!");   //
 		}
 		else
-			response.sendRedirect("public/bookAService.jsp?errormsg=Booked failed.");
+			response.sendRedirect("bookAService.jsp?errormsg=Booked failed.");
 	}
 
 }
