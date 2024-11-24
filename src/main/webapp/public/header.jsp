@@ -115,7 +115,7 @@
 <nav>
     <ul>
         <li><a href="index.jsp">Home</a></li>
-        <li><a href="index.jsp">Services</a></li>
+        <li><a href="services.jsp">Services</a></li>
         <% if (isMember){
         %>	
        
@@ -125,7 +125,7 @@
         <% if (isAdmin){
         %>	
        
-        <li><a href="#">Manage Service</a></li>
+
         <li><a href="displayAllMembers.jsp">Members</a></li>
         <li><a href="#">Feedback History</a></li>
         
