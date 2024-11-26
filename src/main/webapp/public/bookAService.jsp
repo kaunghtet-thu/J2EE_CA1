@@ -33,12 +33,11 @@ if (serviceId != null) {
     session.setAttribute("serviceName", name);
     session.setAttribute("servicePrice", price);
     session.setAttribute("addressId", addressId);
-} else {
+}  
 	serviceId = (String) session.getAttribute("serviceId");
     name = (String) session.getAttribute("serviceName");
     price = (String) session.getAttribute("servicePrice");
     addressId = (String) session.getAttribute("addressId");
-}
 
 if (request.getParameter("cleaningHour") != null) {
     cleaningHour = Integer.parseInt(request.getParameter("cleaningHour"));
@@ -90,7 +89,6 @@ if (request.getParameter("cleaningHour") != null) {
     </select>
     <label for="address">Select Address:</label>
     <select name="addressId" id="address" class="form-control" required>
-	    <option value="" disabled selected>Select your address</option>
 	    <%
 	        // Ensure the 'addresses' attribute is a List of Address objects passed from the servlet
 	        if (addresses != null) {

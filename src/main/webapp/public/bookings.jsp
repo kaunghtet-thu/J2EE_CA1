@@ -46,7 +46,7 @@ if (isMember){
         <th width="400">Feedback</th>
         <th width="200">Actions</th>
     </tr>
-    <%}
+    <%
 
         for (Booking booking : bookings) {
             Feedback feedback = feedbackDAO.getFeedbackByBookingId(booking.getId());
@@ -143,7 +143,7 @@ if (isMember){
     }
 %>
 
-<%} else { %>
+  <%} else { %>
 <p style="color: red; font-weight: bold; font-size: 16px; text-align: center;">You are not authorized</p>
 <%} %>
 <%@ include file="footer.html" %>
