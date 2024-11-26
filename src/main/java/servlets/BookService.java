@@ -69,7 +69,7 @@ public class BookService extends HttpServlet {
 	        	        + "&serviceTime=" + request.getParameter("serviceTime")
 	        	        + "&cleaningHour=" + cleaningHour
 	        	        + "&addressId=" + addressId
-	        	        + "&serviceId=" + serviceId
+	        	        + "&serviceName=" + serviceName
 	        	        + "&servicePrice=" + servicePrice;
 
 	        	    response.sendRedirect(redirectURL);
