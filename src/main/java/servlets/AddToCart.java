@@ -41,15 +41,16 @@ public class AddToCart extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		// Get the current session
+		HttpSession session = request.getSession();
 		
 		String serviceId = request.getParameter("serviceId");
 		int id = Integer.parseInt(serviceId);
+
 	
 	    ServiceDAO dao = new ServiceDAO();
 	    Service service = dao.getServiceById(id); // Implement this method to get the service
 
-        // Get the current session
-        HttpSession session = request.getSession();
 
         // Retrieve the cart from the session, or create a new one if it doesn't exist
         @SuppressWarnings("unchecked")
