@@ -7,8 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.*;
+
 import DAO.Invoicing;
-import bean.Booking;
+import bean.Invoice;
 
 @WebServlet("/public/generateReceipt")
 public class InvoicingServlet extends HttpServlet {
@@ -18,27 +19,19 @@ public class InvoicingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            // Extract booking details from the request (you can use actual form data here)
-            Booking booking = new Booking(
-                    12345,                      // id
-                    67890,                      // memberId
-                    98765,                      // serviceId
-                    1,                          // statusId (e.g., 1 for "Confirmed")
-                    1122,                       // staffId (e.g., ID of the assigned staff member)
-                    LocalDate.of(2025, 1, 27),  // bookingDate
-                    LocalTime.of(14, 0),        // bookingTime (2:00 PM)
-                    LocalDateTime.of(2025, 1, 25, 10, 30) // bookedAt (e.g., 25th Jan 2025 at 10:30 AM)
-            );
+            // Create a single invoice with sample data
+            Invoice invoice = new Invoice(1, "John Doe", LocalDateTime.of(2025, 1, 25, 14, 30), "Cleaning Service",
+                    LocalDate.of(2025, 1, 25), LocalTime.of(14, 30), 99.99);
 
-            // Generate the PDF receipt (now as byte array)
-            byte[] pdfBytes = bookingReceiptService.generatePdfReceipt(booking);
+            // Generate the PDF receipt for the single invoice (now as byte array)
+            byte[] pdfBytes = bookingReceiptService.generatePdfReceipt(invoice);
 
             // Send the email with the PDF attachment
             String recipientEmail = "kaunghsetaung8@gmail.com";
             String subject = "Your Booking Receipt";
-            String body = "Thank you for your booking. Please find your receipt attached..\\n\\n\" +\r\n"
-            		+ "\"Best regards,\\n\" +\r\n"
-            		+ "\"Spotless Cleaning Services Team\\n\"";
+            String body = "Thank you for your booking. Please find your receipt attached.\n\n" +
+                    "Best regards,\n" +
+                    "Spotless Cleaning Services Team\n";
             bookingReceiptService.sendEmailWithAttachment(recipientEmail, subject, body, pdfBytes);
 
             // Respond to the client

@@ -1,22 +1,24 @@
 package DAO;
-import com.itextpdf.kernel.pdf.*;
-import com.itextpdf.layout.element.Paragraph;
 
-import bean.Booking;
-
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import bean.Invoice;
+
 import jakarta.mail.*;
-import jakarta.mail.util.*;
 import jakarta.mail.internet.*;
 import jakarta.activation.DataHandler;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import java.io.*;
 import java.util.Properties;
 
 public class Invoicing {
 
-    // Method to generate PDF receipt and return it as byte array
-    public byte[] generatePdfReceipt(Booking booking) throws Exception {
+    // Method to generate PDF receipt for a single invoice and return it as byte array
+    public byte[] generatePdfReceipt(Invoice invoice) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         // Create a PDF writer linked to the byte array output stream
@@ -24,15 +26,51 @@ public class Invoicing {
         PdfDocument pdfDocument = new PdfDocument(writer);
         Document document = new Document(pdfDocument);
 
-        // Add content to the PDF
-        document.add(new Paragraph("SPOTLESS CLEANING SERVICES"));
-        document.add(new Paragraph("Booking Receipt"));
-        document.add(new Paragraph("Booking ID: " + booking.getId()));
-        document.add(new Paragraph("Member ID: " + booking.getMemberId()));
-        document.add(new Paragraph("Service ID: " + booking.getServiceId()));
-        document.add(new Paragraph("Booking Date: " + booking.getBookingDate()));
-        document.add(new Paragraph("Booking Time: " + booking.getBookingTime()));
-        document.add(new Paragraph("Cleaning Hours: " + booking.getCleaningHour()));
+        // Add heading
+        document.add(new Paragraph("INVOICE").setFontSize(20));
+        document.add(new Paragraph("SPOTLESS CLEANING SERVICES").setFontSize(18));
+        document.add(new Paragraph("Booking Receipt").setFontSize(14));
+        document.add(new Paragraph("\n"));
+
+        // Add booking details
+        document.add(new Paragraph("Booking ID: " + invoice.getBookingid()));
+        document.add(new Paragraph("Customer Name: " + invoice.getCustomerName()));
+        document.add(new Paragraph("Booked At: " + invoice.getBookedAt().toString()));
+        document.add(new Paragraph("\n"));
+
+        // Create a table for service details
+     // Create a table with 4 columns
+        Table serviceTable = new Table(new float[] { 4, 4, 4, 2 })  // Define column widths directly
+                .useAllAvailableWidth();
+
+        serviceTable.addCell("Service Taken");
+        serviceTable.addCell("Service Date");
+        serviceTable.addCell("Time slot");
+        serviceTable.addCell("Price");
+
+        serviceTable.addCell(invoice.getServiceTaken());  // Service Taken
+        serviceTable.addCell(invoice.getBookingDate().toString());  // Booked Date
+        serviceTable.addCell(invoice.getBookingTime().toString());  // Booked Time
+        serviceTable.addCell("$" + String.format("%.2f", invoice.getPrice()));  // Price
+
+
+        serviceTable.setFontSize(12);
+
+        document.add(serviceTable);
+
+        document.add(new Paragraph("\n"));
+
+        double gstAmount = invoice.getPrice() * 0.09; 
+        document.add(new Paragraph("GST 9%: $" + String.format("%.2f", gstAmount)).setFontSize(12));
+        document.add(new Paragraph("Original Price: $" + String.format("%.2f", invoice.getPrice())).setFontSize(12));
+        
+        double grandTotal = invoice.getPrice() + gstAmount;  
+        document.add(new Paragraph("Grand Total: $" + String.format("%.2f", grandTotal)).setFontSize(14));
+
+
+        // Add auto-generated invoice disclaimer
+        document.add(new Paragraph("\n"));
+        document.add(new Paragraph("This is an auto-generated invoice, no need for signature.").setFontSize(10));
 
         // Close the document (flushes the content to the byte array)
         document.close();
