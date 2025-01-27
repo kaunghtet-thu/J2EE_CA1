@@ -52,16 +52,19 @@ public class Invoicing {
         // Set up the session
         Session session = Session.getInstance(properties, new jakarta.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("spotlesscleaningservices.jad@gmail.com", "$asdfghjkl;'$"); // Your email and password
+                return new PasswordAuthentication("spotlesscleaningservices.jad@gmail.com", "bnrd xzmf fwob pcrn"); 
             }
         });
 
         // Create the email message
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("your_email@gmail.com"));
+        message.setFrom(new InternetAddress("spotlesscleaningservices.jad@gmail.com"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
         message.setSubject(subject);
-        message.setText(body);
+
+        // Create a MimeBodyPart to hold the email body
+        MimeBodyPart textPart = new MimeBodyPart();
+        textPart.setText(body);  // Set the body text here
 
         // Create a MimeBodyPart to hold the PDF attachment
         MimeBodyPart attachmentPart = new MimeBodyPart();
@@ -69,10 +72,11 @@ public class Invoicing {
         attachmentPart.setDataHandler(new DataHandler(source));
         attachmentPart.setFileName("receipt_" + System.currentTimeMillis() + ".pdf");
 
-        // Create a multipart message and add the attachment
+        // Create a multipart message and add both the body text and the attachment
         Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(attachmentPart);
-        message.setContent(multipart);
+        multipart.addBodyPart(textPart);  // Add the body part
+        multipart.addBodyPart(attachmentPart);  // Add the attachment part
+        message.setContent(multipart);  // Set the content of the message
 
         // Send the email
         Transport.send(message);

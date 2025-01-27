@@ -36,7 +36,9 @@ public class InvoicingServlet extends HttpServlet {
             // Send the email with the PDF attachment
             String recipientEmail = "kaunghsetaung8@gmail.com";
             String subject = "Your Booking Receipt";
-            String body = "Thank you for your booking. Please find your receipt attached.";
+            String body = "Thank you for your booking. Please find your receipt attached..\\n\\n\" +\r\n"
+            		+ "\"Best regards,\\n\" +\r\n"
+            		+ "\"Spotless Cleaning Services Team\\n\"";
             bookingReceiptService.sendEmailWithAttachment(recipientEmail, subject, body, pdfBytes);
 
             // Respond to the client
