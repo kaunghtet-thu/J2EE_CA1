@@ -23,7 +23,7 @@
     <div class="profile-icon">
         <% if (isMember || isAdmin || isStaff) { %>
             <a href="profile.jsp" class="profile-button">Profile</a><br>
-            <button class ="logout-button" onclick="location.href='logout.jsp'">Log out</button>
+            <button class ="logout-button" onclick="location.href='warningLogout.jsp'">Log out</button>
         <% } else { %>
             <button class="login-button" onclick="location.href='login.jsp'">Log in</button>
         <% } %>

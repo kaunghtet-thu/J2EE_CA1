@@ -34,15 +34,15 @@
         }
 
           .login-card button {
-            background-color:#c5d1ba;
-            color: #000;
+            background-color:#31525b;
+            color: white;
             border: none;
             cursor: pointer;
         }
 
         .login-card button:hover {
-            color: white;
-            background-color: #4cae4c;
+            color: black;
+            background-color: #497C85;
         }
 
         .links {
