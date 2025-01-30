@@ -9,12 +9,12 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 import DAO.BookingDAO;
-import bean.BookingItems;
+import bean.BookingService;
 import bean.Member;
 import bean.Service;
 
@@ -77,7 +77,7 @@ public class BookService extends HttpServlet {
 	        	
 	        } else {
 	        	BookingDAO dao = new BookingDAO();
-	        	boolean success = dao.addBooking(new BookingItems(member.getId(), serviceId, addressId, 1, null, bookingDate, bookingTime, cleaningHour, LocalDateTime.now()));
+	        	boolean success = dao.addBooking(new BookingService(member.getId(), serviceId, addressId, 1, null, bookingDate, bookingTime, cleaningHour, LocalDateTime.now()));
 	        	if(success) {
 	        		List<Service> cart = (List<Service>) session.getAttribute("cart");
 	        		

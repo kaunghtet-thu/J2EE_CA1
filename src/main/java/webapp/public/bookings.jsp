@@ -1,4 +1,4 @@
-<%@ page import="bean.BookingItems,bean.Feedback,DAO.FeedbackDAO,DAO.StatusDAO,DAO.ServiceDAO,DAO.BookingDAO" %>
+<%@ page import="bean.BookingService,bean.Feedback,DAO.FeedbackDAO,DAO.StatusDAO,DAO.ServiceDAO,DAO.BookingDAO" %>
 <%@ page import="java.util.*" %>
 
 <!DOCTYPE html>
@@ -25,7 +25,7 @@ session.removeAttribute("message");
     StatusDAO statusDAO = new StatusDAO();
     ServiceDAO serviceDAO = new ServiceDAO();
     BookingDAO bookingDAO = new BookingDAO();
-    List<BookingItems> bookings = bookingDAO.getBookingsByMemberId((int)session.getAttribute("memberId"));
+    List<BookingService> bookings = bookingDAO.getBookingsByMemberId((int)session.getAttribute("memberId"));
     
     
     if (bookings == null || bookings.isEmpty()) {
@@ -46,10 +46,10 @@ session.removeAttribute("message");
         <th width="200">Actions</th>
     </tr>
     <%
-    for (BookingItems booking : bookings) {
-                Feedback feedback = feedbackDAO.getFeedbackByBookingId(booking.getId());
-                String statusName = statusDAO.getStatusName(booking.getStatusId());
-                int serviceid = booking.getServiceId();
+    for (BookingService booking : bookings) {
+                    Feedback feedback = feedbackDAO.getFeedbackByBookingId(booking.getId());
+                    String statusName = statusDAO.getStatusName(booking.getStatusId());
+                    int serviceid = booking.getServiceId();
     %>
     <tr>
         <td><%= booking.getId() %></td>

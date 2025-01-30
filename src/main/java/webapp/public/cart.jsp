@@ -7,6 +7,7 @@
 </head>
 <body>
 <%@include file="header.jsp" %>
+<%@include file="successError.jsp" %>
 
     <h1>Your Cart</h1>
     

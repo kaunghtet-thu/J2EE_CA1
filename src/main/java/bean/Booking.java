@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class Booking {
 	private int id;
 	private int memberId;
-	private ArrayList<BookingItems> bookingItems;
+	private ArrayList<BookingService> bookingService;
 	
-	public Booking(int id, int memberId, ArrayList<BookingItems> bookingItems) {
+	public Booking(int id, int memberId, ArrayList<BookingService> bookingService) {
 		this.id = id;
 		this.memberId = memberId;
-		this.bookingItems = bookingItems;
+		this.bookingService = bookingService;
 	}
 	public int getId() {
 		return id;
@@ -18,8 +18,8 @@ public class Booking {
 	public int getMemberId() {
 		return memberId;
 	}
-	public ArrayList<BookingItems> getBookingItems() {
-		return bookingItems;
+	public ArrayList<BookingService> getBookingItems() {
+		return bookingService;
 	}
 	
 	

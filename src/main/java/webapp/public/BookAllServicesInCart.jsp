@@ -41,7 +41,7 @@
 <% if (cart == null || cart.isEmpty()) { %>
     <p>Your cart is empty.</p>
 <% } else { %>
-    <form action="ProcessCheckout" method="POST">
+    <form action="<%= request.getContextPath()%>/BookAllServices" method="POST">
         <!-- Common Address Selection -->
         <div id="commonAddressSection">
             <label for="commonAddress">Select Address:</label>
@@ -62,9 +62,16 @@
         <div id="commonTimeSection">
             <label for="commonTime">Preferred Time:</label>
             <select class="form-control" id="commonTime" name="commonTime">
-                <% for (int hour = 7; hour <= 19; hour++) { %>
-                    <option value="<%= hour %>:00"><%= hour %>:00</option>
-                <% } %>
+                <% 
+					        for (int hour = 7; hour <= 19; hour++) {
+					            String time = String.format("%02d:00", hour);
+					            String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
+					        %>
+					                        <option value="<%= time %>"><%= displayTime %></option>
+					            
+					        <% 
+					        } 
+					        %>
             </select>
         </div>
 
@@ -98,9 +105,16 @@
                     <div class="service-time" style="display:none;">
                         <label for="serviceTime_<%= service.getId() %>">Preferred Time:</label>
                         <select class="form-control" id="serviceTime_<%= service.getId() %>" name="serviceTime_<%= service.getId() %>">
-                            <% for (int hour = 7; hour <= 19; hour++) { %>
-                                <option value="<%= hour %>:00"><%= hour %>:00</option>
-                            <% } %>
+                             <% 
+					        for (int hour = 7; hour <= 19; hour++) {
+					            String time = String.format("%02d:00", hour);
+					            String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
+					        %>
+					                        <option value="<%= time %>"><%= displayTime %></option>
+					            
+					        <% 
+					        } 
+					        %>
                         </select>
                     </div>
                 </div>
