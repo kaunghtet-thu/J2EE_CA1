@@ -38,7 +38,8 @@ public class ServiceCategoryDAO {
             
             if (rs.next()) {
                 String name = rs.getString("name");
-                return new ServiceCategory(id, name);
+                String image = rs.getString("image");
+                return new ServiceCategory(id, name, image);
             }
             
         } catch (SQLException e) {
@@ -59,7 +60,8 @@ public class ServiceCategoryDAO {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String name = rs.getString("name");
-                serviceCategories.add(new ServiceCategory(id, name));
+                String image = rs.getString("image");
+                serviceCategories.add(new ServiceCategory(id, name, image));
             }
             
         } catch (SQLException e) {

@@ -1,0 +1,89 @@
+<%@page import="DAO.*" %>
+<%@page import="bean.*" %>
+<%@page import="java.util.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Service Details</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .service-details {
+    width: 80%;
+    margin: 20px auto;
+  }
+  .service-details h2 {
+    text-align: center;
+  }
+  .service-details .service-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    border: 1px solid #ddd;
+  }
+  .service-details .service-info .details {
+    width: 60%;
+  }
+  .service-details .service-info .booking {
+    width: 35%;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+  }
+  .service-details .button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  .service-details .button:hover {
+    background-color: #218838;
+  }
+</style>
+</head>
+<body>
+
+<%@include file="header.jsp" %>
+
+<%
+  // Get the service ID from the URL parameter
+  int serviceId = Integer.parseInt(request.getParameter("serviceId"));
+  
+  // Fetch service details using the service ID
+  ServiceDAO serviceDao = new ServiceDAO();
+  Service service = serviceDao.getServiceById(serviceId);
+%>
+
+<div class="service-details">
+  <h2>Service Details</h2>
+  
+  <div class="service-info">
+    <div class="details">
+      <h3><%= service.getName() %></h3>
+      <p><strong>Description:</strong> <%= service.getDescription() %></p>
+      <p><strong>Price:</strong> $<%= service.getPrice() %></p>
+    </div>
+    
+    <div class="booking">
+      <form action="bookService.jsp" method="POST">
+        <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
+        <input type="submit" value="Book Service" class="button" />
+      </form>
+      <form action="addToCart.jsp" method="POST">
+        <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
+        <input type="submit" value="Add to Cart" class="button" />
+      </form>
+    </div>
+  </div>
+</div>
+
+<%@include file="footer.html" %>
+</body>
+</html>

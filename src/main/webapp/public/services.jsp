@@ -11,196 +11,109 @@
   body {
     font-family: Arial, sans-serif;
   }
-  .container {
+  .category-container {
     display: flex;
-  }
-  .left-column {
-    width: 25%;
-    padding: 20px;
-    border-right: 1px solid #ddd;
-  }
-  .right-column {
-    width: 75%;
+    flex-wrap: nowrap;  /* Prevent categories from wrapping to the next line */
+    overflow-x: auto;   /* Enable horizontal scrolling */
+    gap: 20px;          /* Space between each category table */
     padding: 20px;
   }
-  .category {
+  .category-card-wrapper {
+    min-width: 300px;   /* Set a minimum width for each category card */
+    flex-shrink: 0;     /* Prevent the category card from shrinking */
+  }
+  .category-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    text-align: center;
+    background-color: #fff;
+  }
+  .category-card h3 {
+    margin: 0 0 15px 0;
+    font-size: 20px;
+    color: #333;
+  }
+  .service-link {
+    display: block;
+    font-size: 18px;
+    color: #0066cc;
+    text-decoration: none;
     padding: 10px;
-    cursor: pointer;
-    background-color: #f2f2f2;
-    margin-bottom: 10px;
+    border: 1px solid #ddd;
     border-radius: 5px;
+    transition: background-color 0.3s ease;
   }
-  .category:hover {
-    background-color: #ddd;
+  .service-link:hover {
+    background-color: #f1f1f1;
+    text-decoration: underline;
   }
-  .service-list {
-    margin-top: 20px;
+  .editErr {
+    color: red;
+    background-color: #fdecea;
+    border: 1px solid red;
   }
-  .service-item {
-    padding: 8px;
-    background-color: #f9f9f9;
-    margin-bottom: 5px;
-    border-radius: 5px;
+  .editSuccess {
+    color: green;
+    background-color: #e7f9e7;
+    border: 1px solid green;
   }
-  .editErr{
-	 	color: red;
-	    background-color: #fdecea;
-	    border: 1px solid red;
-   }
-   .editSuccess {
-	    color: green;
-	    background-color: #e7f9e7;
-	    border: 1px solid green;
-	}
-	button {
-            background-color: #E3EED4;
-        }
-  
 </style>
-
 </head>
 <body>
 
 <%@include file="header.jsp" %>
+<h1>AVIALABLE SERVICES</h1>
 <%
     String errorMessage = (String) request.getParameter("errorMsg");
-	String successMessage = (String) request.getParameter("successMsg");
+    String successMessage = (String) request.getParameter("successMsg");
     if (errorMessage != null) {
 %>
     <p class="editErr"><%= errorMessage %></p>
-<% } ;
-   if (successMessage != null) { %>
-   
-   <p class= "editSuccess"><%=successMessage%></p>
-<%} %>
+<% } 
+    if (successMessage != null) { 
+%>
+    <p class="editSuccess"><%= successMessage %></p>
+<% } %>
 
-<div class="container">
-  <!-- Left Column: Categories -->
-  <div class="left-column">
-    <h2>Service Categories</h2>
+<div class="category-container">
+  <% 
+    // Fetch categories
+    ServiceCategoryDAO dao = new ServiceCategoryDAO();
+    List<ServiceCategory> categories = dao.getAllServiceCategories();
+    
 
-    <%-- Dynamically populate the categories --%>
-    <%
-
-        ServiceCategoryDAO dao = new ServiceCategoryDAO();
-        List<ServiceCategory> categories = dao.getAllServiceCategories();
-
-        for (ServiceCategory category : categories) {
-    %>
-        <div style="display: flex; align-items: center; margin-bottom: 30px;">
-            <!-- Form for selecting the category -->
-            <form action="services.jsp" method="POST" style="margin: 0; flex-grow: 1;">
-                <input type="hidden" name="categoryId" value="<%= category.getId() %>" />
-                <button type="submit" class="categoryBtn" style="width: 100%; text-align: left; padding: 10px; border: none; background-color: #f2f2f2; border-radius: 5px;">
-                    <%= category.getName() %>
-                </button>
-            </form>
-
-            <% if (isAdmin) { %>
-                <!-- Form for deleting the category -->
-                <form action="DeleteCategory" method="POST" style="margin: 0; margin-left: 10px;">
-                    <input type="hidden" name="categoryId" value="<%= category.getId() %>" />
-                    <button type="submit" style="background-color: red; color: white; border: none; padding: 10px; border-radius: 5px;">
-                        Delete
-                    </button>
-                </form>
-            <% } %>
-        </div>
-    <%
-        }
-       if (isAdmin){ %>
-      	 <form action="AddNewServiceCategory" method="post">
-		    <fieldset>
-		      <legend>Add New Service Category</legend>
-		      <input type="text" name="serviceCategory" placeholder="Enter new service category" required>
-		      <button type="submit">Add</button>
-		    </fieldset>
-		  </form>
-      <%}%>
-   
-  </div>
-
-
-  <div class="right-column">
-  
-  <%
-  int categoryIdFromLeftCol = request.getParameter("categoryId") != null ? Integer.parseInt(request.getParameter("categoryId")) : categories.get(0).getId();
-  String category = dao.getServiceCategoryById(categoryIdFromLeftCol).getName();
+    // Loop through categories and display a card for each
+    for (ServiceCategory category : categories) {
+        int categoryId = category.getId();
+        String categoryName = category.getName();
+        String imageurl = category.getImage();
   %>
-    <h2>Services under <%=category %></h2>
-    <%
+    <!-- Category card for each category -->
+    <div class="category-card-wrapper">
+      <div class="category-card">
+        <h3><%= categoryName %> Services</h3>
+       <img src="images/<%= category.getImage() %>" alt="<%= category.getName() %>" width="100" height="100" />
+        <% 
+            // Fetch services under this category
+            ServiceDAO serviceDao = new ServiceDAO();
+            List<Service> services = serviceDao.getServicesByCategory(categoryId);
 
- 
-    	ServiceDAO serviceDao = new ServiceDAO();
-    	 List<Service> services  = serviceDao.getServicesByCategory(categoryIdFromLeftCol);
-    	  
-    	  %>
- 
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Image</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <% if (isAdmin){ %>
-                <!-- Hidden Form Row -->
-			        <tr id="newServiceFormRow" class="hidden-form">
-			          <form action="AddNewService" method="POST">
-			          
-			            <input type="hidden" name="categoryIdFromLeftCol" value="<%=categoryIdFromLeftCol %>" />
-			            <td><input type="text" name="serviceName" placeholder="Service Name" required /></td>
-			            <td><input type="text" name="serviceDescription" placeholder="Description" required /></td>
-			            <td><input type="number" name="servicePrice" placeholder="Price" step="0.01" required /></td>
-			            <td><input type="text" name="image" placeholder="Image Name" disabled /></td>
-			            <td><input type="submit" value="Add New Service" /></td>
-			          </form>
-			        </tr> 
-			        <%} %>
-				<% for (Service service : services) { %>
-					   <tr>
-					        <td><%= service.getName() %></td>
-					        <td><%= service.getDescription() %></td>
-					        <td><%= service.getPrice() %></td>
-					        <td>
-					            <img src="images/<%= service.getImage() %>" alt="<%= service.getName() %>" width="100" height="100" />
-					        </td>
-					        <td> <% if (isMember) { %>
-					            <form action="AddToCart" method="POST" style="display:inline;">
-					                <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
-					                <input type="hidden" name="categoryId" value="<%= categoryIdFromLeftCol %>" />
-					                <input type="submit" value="Add To Cart" />
-					            </form>
-					            <form action="bookAService.jsp" method="POST" style="display:inline;">
-					                <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
-					                <input type="hidden" name="serviceName" value="<%= service.getName() %>" />
-					                <input type="hidden" name="servicePrice" value="<%= service.getPrice() %>" />
-					                <input type="submit" value="Book" />
-					            </form>
-					             <%} else if (isPublic) { %>
-					             <form action="login.jsp" method="POST" style="display:inline;">
-					                <input type="submit" value="Log in to book" />
-					             </form>
-					             <% } else if (isAdmin) { %>
-					             <form action="updateService.jsp" method="POST" style="display:inline;">
-					             	<input type="hidden" name="serviceId" value="<%= service.getId() %>" />
-					                <input type="submit" value="Manage" />
-					             </form>
-					           
-					             <%} %>
-					        </td>   
-						</tr>
-					
-					<% }%>
-                </tbody>
-            </table>
-
-  </div>
+            // Loop through services and display each service as a card
+            for (Service service : services) { 
+        %>
+          <!-- Each service displayed as a clickable link in a card -->
+          <a href="serviceDetails.jsp?serviceId=<%= service.getId() %>" class="service-link">
+            <%= service.getName() %>
+          </a>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
 </div>
+
 <%@include file="footer.html" %>
 </body>
 </html>
