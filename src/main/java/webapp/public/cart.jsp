@@ -76,7 +76,7 @@
 	<form action="services.jsp" method="get">
 	    <button type="submit">Continue Shopping</button>
 	</form>
-	<form action="services.jsp" method="get">
+	<form action="BookAllServicesInCart.jsp" method="get">
 	    <button type="submit">Book All</button>
 	</form>
     <%@include file="footer.html" %>

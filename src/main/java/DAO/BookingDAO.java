@@ -10,19 +10,19 @@ import java.util.List;
 public class BookingDAO {
 
     // Create: Add a new booking
-    public boolean addBooking(BookingItems booking) {
+    public boolean addBooking(BookingItems bookingItem) {
         String sql = "INSERT INTO booking (member_id, service_id, status_id, staff_id, booking_date, booking_time, cleaning_hour, booked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseUtil.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setInt(1, booking.getMemberId());
-            stmt.setInt(2, booking.getServiceId());
-            stmt.setInt(3, booking.getStatusId());
-            stmt.setObject(4, booking.getStaffId(), Types.INTEGER); // Handle optional field
-            stmt.setDate(5, Date.valueOf(booking.getBookingDate()));
-            stmt.setTime(6, Time.valueOf(booking.getBookingTime()));
-            stmt.setInt(7, booking.getCleaningHour());
-            stmt.setTimestamp(8, Timestamp.valueOf(booking.getBookedAt()));
+            stmt.setInt(1, bookingItem.getMemberId());
+            stmt.setInt(2, bookingItem.getServiceId());
+            stmt.setInt(3, bookingItem.getStatusId());
+            stmt.setObject(4, bookingItem.getStaffId(), Types.INTEGER); // Handle optional field
+            stmt.setDate(5, Date.valueOf(bookingItem.getBookingDate()));
+            stmt.setTime(6, Time.valueOf(bookingItem.getBookingTime()));
+            stmt.setInt(7, bookingItem.getCleaningHour());
+            stmt.setTimestamp(8, Timestamp.valueOf(bookingItem.getBookedAt()));
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
