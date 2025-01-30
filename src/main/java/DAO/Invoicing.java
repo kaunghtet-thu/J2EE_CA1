@@ -6,13 +6,14 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import bean.Invoice;
-
+import bean.InvoiceItem;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import jakarta.activation.DataHandler;
 import jakarta.mail.util.ByteArrayDataSource;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class Invoicing {
@@ -35,7 +36,7 @@ public class Invoicing {
         // Add booking details
         document.add(new Paragraph("Booking ID: " + invoice.getBookingid()));
         document.add(new Paragraph("Customer Name: " + invoice.getCustomerName()));
-        document.add(new Paragraph("Booked At: " + invoice.getBookedAt().toString()));
+//        document.add(new Paragraph("Booked At: " + invoice.getBookedAt().toString()));
         document.add(new Paragraph("\n"));
 
         // Create a table for service details
@@ -47,12 +48,15 @@ public class Invoicing {
         serviceTable.addCell("Service Date");
         serviceTable.addCell("Time slot");
         serviceTable.addCell("Price");
-
-        serviceTable.addCell(invoice.getServiceTaken());  // Service Taken
-        serviceTable.addCell(invoice.getBookingDate().toString());  // Booked Date
-        serviceTable.addCell(invoice.getBookingTime().toString());  // Booked Time
-        serviceTable.addCell("$" + String.format("%.2f", invoice.getPrice()));  // Price
-
+        ArrayList<InvoiceItem> invoiceItems = invoice.getInvoiceItem();
+        double totalprice=0.0;
+        for (InvoiceItem item : invoiceItems) {
+            serviceTable.addCell(item.getServiceName()); // Service Taken
+            serviceTable.addCell(item.getBookingDate().toString()); // Booked Date
+            serviceTable.addCell(item.getBookingTime().toString()); // Booked Time
+            serviceTable.addCell("$" + String.format("%.2f", item.getPrice())); // Price per item
+            totalprice+=item.getPrice();
+        }
 
         serviceTable.setFontSize(12);
 
@@ -60,11 +64,16 @@ public class Invoicing {
 
         document.add(new Paragraph("\n"));
 
-        double gstAmount = invoice.getPrice() * 0.09; 
+        double gstAmount = totalprice * 0.09; 
+        double discountAmount=0;
+        if (invoice.getDiscount() < 1) {
+        	 discountAmount = totalprice * invoice.getDiscount();
+        } 
+       
+        document.add(new Paragraph("Original Price: $" + String.format("%.2f", totalprice)).setFontSize(12));
         document.add(new Paragraph("GST 9%: $" + String.format("%.2f", gstAmount)).setFontSize(12));
-        document.add(new Paragraph("Original Price: $" + String.format("%.2f", invoice.getPrice())).setFontSize(12));
         
-        double grandTotal = invoice.getPrice() + gstAmount;  
+        double grandTotal = totalprice - discountAmount + gstAmount;  
         document.add(new Paragraph("Grand Total: $" + String.format("%.2f", grandTotal)).setFontSize(14));
 
 
