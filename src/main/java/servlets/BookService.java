@@ -14,7 +14,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import DAO.BookingDAO;
-import bean.Booking;
+import bean.BookingItems;
 import bean.Member;
 import bean.Service;
 
@@ -77,7 +77,7 @@ public class BookService extends HttpServlet {
 	        	
 	        } else {
 	        	BookingDAO dao = new BookingDAO();
-	        	boolean success = dao.addBooking(new Booking(member.getId(), serviceId, addressId, 1, null, bookingDate, bookingTime, cleaningHour, LocalDateTime.now()));
+	        	boolean success = dao.addBooking(new BookingItems(member.getId(), serviceId, addressId, 1, null, bookingDate, bookingTime, cleaningHour, LocalDateTime.now()));
 	        	if(success) {
 	        		List<Service> cart = (List<Service>) session.getAttribute("cart");
 	        		

@@ -37,10 +37,12 @@
         }
         fieldset {
             margin-bottom: 10px;
-            background-color: #E3EED4;
+            background-color: #b3dee5;
         }
         button {
-            background-color: #c5d1ba;
+            background-color: #31525b;
+            color: white;
+            border-radius: 15px;
         }
         input::placeholder {
             font-style: italic;

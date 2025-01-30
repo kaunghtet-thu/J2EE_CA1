@@ -41,7 +41,7 @@
 		text-align: center;
 	    border: 1px solid #ddd;
 	    border-radius: 5px;
-	    background-color:#c5d1ba;
+	    background-color:#b3dee5;
 	    padding: 10px;
 	    transition: background-color 0.3s, transform 0.2s;
 	    cursor: pointer;
