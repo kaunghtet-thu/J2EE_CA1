@@ -39,12 +39,11 @@ public class AddNewService extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
 		String name = request.getParameter("serviceName");
         String description = request.getParameter("serviceDescription");
         double price = Double.parseDouble(request.getParameter("servicePrice"));
         String image = request.getParameter("image");
-        String catId = request.getParameter("categoryIdFromLeftCol");
+        String catId = request.getParameter("categoryId");
         Integer categoryId = Integer.parseInt(catId);
         
 
