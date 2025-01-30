@@ -36,30 +36,34 @@ public class Invoicing {
         // Add booking details
         document.add(new Paragraph("Booking ID: " + invoice.getBookingid()));
         document.add(new Paragraph("Customer Name: " + invoice.getCustomerName()));
-//        document.add(new Paragraph("Booked At: " + invoice.getBookedAt().toString()));
+        document.add(new Paragraph("Booked At: " + invoice.getBookedAt().toString()));
         document.add(new Paragraph("\n"));
 
         // Create a table for service details
      // Create a table with 4 columns
-        Table serviceTable = new Table(new float[] { 4, 4, 4, 2 })  // Define column widths directly
+        Table serviceTable = new Table(new float[] { 4, 4, 3, 3, 2 })  // Added one more column of width 4
                 .useAllAvailableWidth();
 
+        // Add table headers
         serviceTable.addCell("Service Taken");
+        serviceTable.addCell("Address");  // New column
         serviceTable.addCell("Service Date");
-        serviceTable.addCell("Time slot");
+        serviceTable.addCell("Time Slot");
         serviceTable.addCell("Price");
+
         ArrayList<InvoiceItem> invoiceItems = invoice.getInvoiceItem();
-        double totalprice=0.0;
+        double totalprice = 0.0;
+
         for (InvoiceItem item : invoiceItems) {
-            serviceTable.addCell(item.getServiceName()); // Service Taken
-            serviceTable.addCell(item.getBookingDate().toString()); // Booked Date
-            serviceTable.addCell(item.getBookingTime().toString()); // Booked Time
-            serviceTable.addCell("$" + String.format("%.2f", item.getPrice())); // Price per item
-            totalprice+=item.getPrice();
+            serviceTable.addCell(item.getServiceName()); 
+            serviceTable.addCell(item.getAddress());     
+            serviceTable.addCell(item.getBookingDate().toString()); 
+            serviceTable.addCell(item.getBookingTime().toString()); 
+            serviceTable.addCell("$" + String.format("%.2f", item.getPrice())); 
+            totalprice += item.getPrice();
         }
 
         serviceTable.setFontSize(12);
-
         document.add(serviceTable);
 
         document.add(new Paragraph("\n"));
