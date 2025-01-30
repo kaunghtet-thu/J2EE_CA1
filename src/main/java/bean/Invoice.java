@@ -1,57 +1,31 @@
 package bean;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.ArrayList;
 
 public class Invoice {
-	private int bookingid;
+	private int bookingId;
 	private String customerName;
-	private LocalDateTime bookedAt;
-	private String serviceTaken;
-    private LocalDate bookingDate;
-    private LocalTime bookingTime;
-    private double price;
-    
-	public Invoice(int bookingid, String customerName, LocalDateTime bookedAt, String serviceTaken,
-			LocalDate bookingDate, LocalTime bookingTime, double price) {
-		this.bookingid = bookingid;
+	private ArrayList<InvoiceItem> invoiceItem;
+	private double discount;
+
+	public Invoice(int bookingid, String customerName, ArrayList<InvoiceItem> invoiceItem) {
+		this.bookingId = bookingid;
 		this.customerName = customerName;
-		this.bookedAt = bookedAt;
-		this.serviceTaken = serviceTaken;
-		this.bookingDate = bookingDate;
-		this.bookingTime = bookingTime;
-		this.price = price;
+		this.invoiceItem = invoiceItem;
 	}
 
 	public int getBookingid() {
-		return bookingid;
+		return bookingId;
 	}
 
 	public String getCustomerName() {
 		return customerName;
 	}
 
-	public LocalDateTime getBookedAt() {
-		return bookedAt;
+	public ArrayList<InvoiceItem> getInvoiceItem() {
+		return invoiceItem;
+	} 
+	public double getDiscount () {
+		return this.discount;
 	}
-
-	public String getServiceTaken() {
-		return serviceTaken;
-	}
-
-	public LocalDate getBookingDate() {
-		return bookingDate;
-	}
-
-	public LocalTime getBookingTime() {
-		return bookingTime;
-	}
-
-	public double getPrice() {
-		return price;
-	}
-    
-	
-	
 }

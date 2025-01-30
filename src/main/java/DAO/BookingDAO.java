@@ -1,7 +1,7 @@
 package DAO;
 
 import DB.DatabaseUtil;
-import bean.Booking;
+import bean.BookingItems;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 public class BookingDAO {
 
     // Create: Add a new booking
-    public boolean addBooking(Booking booking) {
+    public boolean addBooking(BookingItems booking) {
         String sql = "INSERT INTO booking (member_id, service_id, status_id, staff_id, booking_date, booking_time, cleaning_hour, booked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseUtil.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -74,8 +74,8 @@ public class BookingDAO {
 
 
     // Read: Get all bookings
-    public List<Booking> getAllBookings() {
-        List<Booking> bookings = new ArrayList<>();
+    public List<BookingItems> getAllBookings() {
+        List<BookingItems> bookings = new ArrayList<>();
         String sql = "SELECT * FROM booking";
 
         try (Connection connection = DatabaseUtil.getConnection();
@@ -83,7 +83,7 @@ public class BookingDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Booking booking = new Booking(
+                BookingItems booking = new BookingItems(
                         rs.getInt("id"),
                         rs.getInt("member_id"),
                         rs.getInt("service_id"),
@@ -102,8 +102,8 @@ public class BookingDAO {
         return null;
     }
     
-    public List<Booking> getBookingsByMemberId(int memberId) {
-        List<Booking> bookings = new ArrayList<>();
+    public List<BookingItems> getBookingsByMemberId(int memberId) {
+        List<BookingItems> bookings = new ArrayList<>();
         String sql = "SELECT * FROM booking WHERE member_id = ?";
 
         try (Connection connection = DatabaseUtil.getConnection();
@@ -114,7 +114,7 @@ public class BookingDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    bookings.add(new Booking(
+                    bookings.add(new BookingItems(
                             rs.getInt("id"),
                             rs.getInt("member_id"),
                             rs.getInt("service_id"),
