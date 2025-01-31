@@ -25,23 +25,26 @@
 %>
 
 <h2>Checkout</h2>
-<!-- Checkboxes for Different Selections -->
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="differentAddresses" onclick="toggleAddressInputs()">
-            <label class="form-check-label" for="differentAddresses">Use different addresses for each service</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="differentDates" onclick="toggleDateTimeInputs()">
-            <label class="form-check-label" for="differentDates">Use different dates for each service</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="differentTimes" onclick="toggleDateTimeInputs()">
-            <label class="form-check-label" for="differentTimes">Use different times for each service</label>
-        </div>
-<% if (cart == null || cart.isEmpty()) { %>
-    <p>Your cart is empty.</p>
-<% } else { %>
-    <form action="<%= request.getContextPath()%>/BookAllServices" method="POST">
+
+<form action="<%= request.getContextPath()%>/BookAllServices" method="POST">
+	<input type="hidden" name="memberId" value="<%= memberId %>">
+    <!-- Checkboxes for Different Selections -->
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="differentAddresses" name="differentAddresses" onchange="toggleAddressInputs()">
+        <label class="form-check-label" for="differentAddresses">Use different addresses for each service</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="differentDates" name="differentDates" onchange="toggleDateTimeInputs()">
+        <label class="form-check-label" for="differentDates">Use different dates for each service</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="differentTimes" name="differentTimes" onchange="toggleDateTimeInputs()">
+        <label class="form-check-label" for="differentTimes">Use different times for each service</label>
+    </div>
+
+    <% if (cart == null || cart.isEmpty()) { %>
+        <p>Your cart is empty.</p>
+    <% } else { %>
         <!-- Common Address Selection -->
         <div id="commonAddressSection">
             <label for="commonAddress">Select Address:</label>
@@ -63,19 +66,16 @@
             <label for="commonTime">Preferred Time:</label>
             <select class="form-control" id="commonTime" name="commonTime">
                 <% 
-					        for (int hour = 7; hour <= 19; hour++) {
-					            String time = String.format("%02d:00", hour);
-					            String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
-					        %>
-					                        <option value="<%= time %>"><%= displayTime %></option>
-					            
-					        <% 
-					        } 
-					        %>
+                    for (int hour = 7; hour <= 19; hour++) {
+                        String time = String.format("%02d:00", hour);
+                        String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
+                %>
+                    <option value="<%= time %>"><%= displayTime %></option>
+                <% 
+                    } 
+                %>
             </select>
         </div>
-
-        
 
         <div class="mt-4">
             <% for (Service service : cart) { 
@@ -105,16 +105,15 @@
                     <div class="service-time" style="display:none;">
                         <label for="serviceTime_<%= service.getId() %>">Preferred Time:</label>
                         <select class="form-control" id="serviceTime_<%= service.getId() %>" name="serviceTime_<%= service.getId() %>">
-                             <% 
-					        for (int hour = 7; hour <= 19; hour++) {
-					            String time = String.format("%02d:00", hour);
-					            String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
-					        %>
-					                        <option value="<%= time %>"><%= displayTime %></option>
-					            
-					        <% 
-					        } 
-					        %>
+                            <% 
+                                for (int hour = 7; hour <= 19; hour++) {
+                                    String time = String.format("%02d:00", hour);
+                                    String displayTime = (hour > 12 ? hour - 12 : hour) + ":00" + (hour >= 12 ? " PM" : " AM");
+                            %>
+                                <option value="<%= time %>"><%= displayTime %></option>
+                            <% 
+                                } 
+                            %>
                         </select>
                     </div>
                 </div>
@@ -133,8 +132,8 @@
         </div>
 
         <button type="submit" class="btn btn-primary mt-3">Confirm Booking</button>
-    </form>
-<% } %>
+    <% } %>
+</form>
 
 <script>
 function toggleAddressInputs() {

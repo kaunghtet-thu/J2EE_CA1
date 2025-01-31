@@ -9,98 +9,147 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import DAO.BookingDAO;
+import DAO.MemberDAO;
+
 import DAO.BookingServiceDAO;
 import bean.BookingService;
 import bean.Service;
+import bean.Address;
 
 @WebServlet("/BookAllServices")
 public class BookAllServices extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Retrieve the services from the session storage (cart)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         HttpSession session = request.getSession();
-        List<Service> services = (List<Service>) session.getAttribute("cart");
+        int memberId = (int)session.getAttribute("memberId");
+        MemberDAO memberDAO = new MemberDAO();
 
-        if (services == null || services.isEmpty()) {
-            // Redirect to the cart page or display an error message
-            response.sendRedirect("public/cart.jsp");
-            return;
+        // Get the common address, date, and time if selected
+        Integer commonAddressId = null;
+        String commonAddress = null;
+        if (request.getParameter("commonAddress") != null && !request.getParameter("commonAddress").isEmpty()) {
+            commonAddressId = Integer.parseInt(request.getParameter("commonAddress"));
+            if (commonAddressId == -1) {
+                commonAddress = request.getParameter("newCommonAddress");
+            } else {
+                Address commonAddressObj = memberDAO.getAddressById(commonAddressId);
+                commonAddress = commonAddressObj.getAddress();
+            }
         }
+        String commonDate = request.getParameter("commonDate");
+        String commonTime = request.getParameter("commonTime");
 
-        // Retrieve the member ID and address ID from the request parameters
-        int memberId = (int) session.getAttribute("memberId");
-        int commonAddressId = Integer.parseInt(request.getParameter("commonAddress"));
-        String newCommonAddress = request.getParameter("newCommonAddress");
+        // Get the selected services from the session
+        List<Service> cart = (List<Service>) session.getAttribute("cart");
 
-        // Retrieve the date and time inputs
-        boolean useDifferentAddresses = Boolean.parseBoolean(request.getParameter("differentAddresses"));
-        boolean useDifferentDates = Boolean.parseBoolean(request.getParameter("differentDates"));
-        boolean useDifferentTimes = Boolean.parseBoolean(request.getParameter("differentTimes"));
-
-        // Parse the common date and time using custom formatters
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate commonDate = LocalDate.parse(request.getParameter("commonDate"), dateFormatter);
-
-        LocalTime commonTime = LocalTime.parse(request.getParameter("commonTime"));
-
+        // Process the form data
+        List<Map<String, Object>> bookingDetails = new ArrayList<>();
         List<BookingService> bookingServices = new ArrayList<>();
-        for (Service service : services) {
+        for (Service service : cart) {
+            int serviceId = service.getId();
+
+            // Get the address, date, and time for the current service
+            String addressParam = "address_" + serviceId;
+            String dateParam = "serviceDate_" + serviceId;
+            String timeParam = "serviceTime_" + serviceId;
+
+            Integer addressId = null;
+            String address = null;
+            String date = null;
+            String time = null;
+
+            // Check if the user selected a different address, date, or time for the current service
+            boolean differentAddresses = request.getParameter("differentAddresses") != null;
+            boolean differentDates = request.getParameter("differentDates") != null;
+            boolean differentTimes = request.getParameter("differentTimes") != null;
+
+            if (differentAddresses) {
+                if (request.getParameter(addressParam) != null && !request.getParameter(addressParam).isEmpty()) {
+                    addressId = Integer.parseInt(request.getParameter(addressParam));
+                    if (addressId == -1) {
+                        address = request.getParameter("newAddress_" + serviceId);
+                    } else {
+                        Address selectedAddress = memberDAO.getAddressById(addressId);
+                        address = selectedAddress.getAddress();
+                    }
+                } else {
+                    address = null;
+                }
+            } else {
+                addressId = commonAddressId;
+                address = commonAddress;
+            }
+
+            if (differentDates) {
+                date = request.getParameter(dateParam);
+            } else {
+                date = commonDate;
+            }
+
+            if (differentTimes) {
+                time = request.getParameter(timeParam);
+            } else {
+                time = commonTime;
+            }
+
+            // Process the booking and save the data
             BookingService bookingService = new BookingService();
-            bookingService.setServiceId(service.getId());
-            bookingService.setQuantity(1); // Assuming 1 for now, you can add a quantity field in the JSP
-
-            if (useDifferentAddresses) {
-                int addressId = Integer.parseInt(request.getParameter("address_" + service.getId()));
-                String newAddress = request.getParameter("newAddress_" + service.getId());
-                bookingService.setAddressId(addressId);
-            } else {
-                bookingService.setAddressId(commonAddressId);
-            }
-
-            if (useDifferentDates) {
-                bookingService.setBookingDate(LocalDate.parse(request.getParameter("serviceDate_" + service.getId()), dateFormatter));
-            } else {
-                bookingService.setBookingDate(commonDate);
-            }
-
-            if (useDifferentTimes) {
-                bookingService.setBookingTime(LocalTime.parse(request.getParameter("serviceTime_" + service.getId())));
-            } else {
-                bookingService.setBookingTime(commonTime);
-            }
-
+            bookingService.setServiceId(serviceId);
+            bookingService.setQuantity(1);
+            bookingService.setAddressId(addressId);
+            bookingService.setBookingDate(LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            bookingService.setBookingTime(LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm")));
             bookingServices.add(bookingService);
+
+            Map<String, Object> bookingInfo = new HashMap<>();
+            bookingInfo.put("serviceId", serviceId);
+            bookingInfo.put("address", address);
+            bookingInfo.put("date", date);
+            bookingInfo.put("time", time);
+            bookingDetails.add(bookingInfo);
         }
 
-        // Create a new booking
+        // Create the booking
         BookingDAO bookingDAO = new BookingDAO();
         int bookingId = bookingDAO.createBooking(memberId, 1);
 
         if (bookingId == -1) {
-            // Handle the error, e.g., redirect to an error page
-            response.sendRedirect("error.jsp");
+            request.setAttribute("errorMessage", "Booking failed. Please try again.");
+            request.getRequestDispatcher("/public/cart.jsp").forward(request, response);
             return;
         }
 
-        // Add the booking services to the database
+        // Create the booking services
         BookingServiceDAO bookingServiceDAO = new BookingServiceDAO();
         boolean success = bookingServiceDAO.createBookingServices(bookingId, bookingServices);
 
+//        if (success) {
+//            // Pass the booking details to the JSP
+//            request.setAttribute("bookingDetails", bookingDetails);
         if (success) {
-            // Booking and booking services created successfully
-            // You can redirect the user to a confirmation page or perform any other necessary actions
-            response.sendRedirect("public/cart.jsp?successMsg=Services have been booked successfully!");
+            // Print the booking details
+            System.out.println("Booking Details:");
+            for (Map<String, Object> booking : bookingDetails) {
+                System.out.println("Service ID: " + booking.get("serviceId"));
+                System.out.println("Address: " + booking.get("address"));
+                System.out.println("Date: " + booking.get("date"));
+                System.out.println("Time: " + booking.get("time"));
+                System.out.println("---");
+            }
+            response.sendRedirect(request.getContextPath() + "/public/cart.jsp?successMsg=Yayyy!");
         } else {
-            // Handle the error, e.g., redirect to an error page
-            response.sendRedirect("public/cart.jsp?errorMsg=Booking failed!");
+            request.setAttribute("errorMessage", "Booking failed. Please try again.");
+            request.getRequestDispatcher("/public/cart.jsp").forward(request, response);
         }
     }
 }

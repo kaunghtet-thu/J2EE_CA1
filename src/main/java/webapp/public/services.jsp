@@ -62,7 +62,10 @@
 <body>
 
 <%@include file="header.jsp" %>
-<%
+<%	
+	int count = 0;
+	List<Service> cart = (List<Service>) session.getAttribute("cart");
+
     String errorMessage = (String) request.getParameter("errorMsg");
 	String successMessage = (String) request.getParameter("successMsg");
     if (errorMessage != null) {
@@ -160,8 +163,14 @@
 			            <td><input type="submit" value="Add New Service" /></td>
 			          </form>
 			        </tr> 
-			        <%} %>
-				<% for (Service service : services) { %>
+			        <%} 
+			        %>
+				<% for (Service service : services) { 
+					if (count < 2) {
+				        cart.add(service);
+				        count++;
+				    }
+				%>
 					   <tr>
 					        <td><%= service.getName() %></td>
 					        <td><%= service.getDescription() %></td>
