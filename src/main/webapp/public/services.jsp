@@ -88,12 +88,15 @@
     background-color: #31525b;
     color: white;
   }
+  #availServ {
+  	text-align: center;
+  }
 </style>
 </head>
 <body>
 
 <%@include file="header.jsp" %>
-<h1>AVAILABLE SERVICES</h1>
+<h1 id="availServ">AVAILABLE SERVICES</h1>
 
 <%
     String errorMessage = request.getParameter("errorMsg");

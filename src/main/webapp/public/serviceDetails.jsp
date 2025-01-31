@@ -70,17 +70,32 @@
       <p><strong>Description:</strong> <%= service.getDescription() %></p>
       <p><strong>Price:</strong> $<%= service.getPrice() %></p>
     </div>
-    
+    <%if (isMember) { %>
     <div class="booking">
-      <form action="bookService.jsp" method="POST">
+      <form action="bookAService.jsp" method="POST">
         <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
         <input type="submit" value="Book Service" class="button" />
       </form>
-      <form action="addToCart.jsp" method="POST">
+      <form action="AddToCart" method="POST">
         <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
         <input type="submit" value="Add to Cart" class="button" />
       </form>
     </div>
+    <%} else if (isAdmin){ %>
+    <div class="manage">
+      <form action="updateService.jsp?serviceId=<%= service.getId() %>" method="POST">
+        <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
+        <input type="submit" value="Manage Service" class="button" />
+      </form>
+    </div>
+    <%} else if (isPublic) { %>
+    <div class="manage">
+      <form action="login.jsp" method="POST">
+        <input type="hidden" name="serviceId" value="<%= service.getId() %>" />
+        <input type="submit" value="Login to Book" class="button" />
+      </form>
+    </div>
+    <%} %>
   </div>
 </div>
 
