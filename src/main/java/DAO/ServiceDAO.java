@@ -2,6 +2,7 @@ package DAO;
 
 import DB.DatabaseUtil;
 import bean.Service;
+import bean.DashboardService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -160,4 +161,59 @@ public class ServiceDAO {
             return false;
         }
     }
+
+    public ArrayList<DashboardService> getAllServicesForDashboard(String filter) {
+        // Correct SQL query with a placeholder for the filter
+        String sql = "SELECT * FROM get_service_summary(?);";
+        ArrayList<DashboardService> services = new ArrayList<>();
+
+        try (Connection connection = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setString(1, filter);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    services.add(new DashboardService(
+                            rs.getInt("service_id"),        
+                            rs.getString("service_name"),  
+                            rs.getLong("booking_count"),    
+                            rs.getDouble("average_rating")   
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Return the list of services
+        return services;
+    }
+    
+    public ArrayList<DashboardService> getServicesForDashboardByCategory (String filter, Integer categoryId) {
+        // Correct SQL query with a placeholder for the filter
+        String sql = "SELECT * FROM get_service_summary(?,?);";
+        ArrayList<DashboardService> services = new ArrayList<>();
+
+        try (Connection connection = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setString(1, filter);
+            pstmt.setInt(2, categoryId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    services.add(new DashboardService(
+                            rs.getInt("service_id"),        
+                            rs.getString("service_name"),  
+                            rs.getLong("booking_count"),    
+                            rs.getDouble("average_rating")   
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return services;
+}
 }
