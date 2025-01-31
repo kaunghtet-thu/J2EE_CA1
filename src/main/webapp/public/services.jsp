@@ -87,6 +87,7 @@
   #addNewCat {
     background-color: #31525b;
     color: white;
+    text-align: left;
   }
   #availServ {
   	text-align: center;
@@ -116,15 +117,15 @@
     <!-- Move Add New Category Card to the Front -->
     <div class="category-card-wrapper">
       <div class="category-card" id="addNewCat">
-        <h3 style="color: white;">Add New Category</h3>
+        <h3 style="color: white;">+ Add New Category</h3>
         <form action="AddNewServiceCategory" method="post" enctype="multipart/form-data">
           <label for="serviceCategory">Category Name:</label>
           <input type="text" id="serviceCategory" name="serviceCategory" required><br>
 
           <label for="categoryImage">Category Image:</label>
-          <input type="file" id="categoryImage" name="categoryImage" required><br>
+          <input type="file" id="categoryImage" name="categoryImage" ><br><br>
 
-          <button type="submit">Add Category</button>
+          <button type="submit" class="manage-btn">Add Category</button>
         </form>
       </div>
     </div>
@@ -141,8 +142,12 @@
     <div class="category-card-wrapper">
       <div class="category-card">
         <h3><%= categoryName %> Services</h3>
-        <img src="images/<%= category.getImage() %>" alt="<%= category.getName() %>" width="100" height="100" />
-
+        <img src="images/<%= category.getImage() %>" alt="<%= category.getName() %>" width="100" height="100" /><br>
+        
+		<form action="updateCategory.jsp" method="post">
+              <input type="hidden" name="categoryId" value="<%= categoryId %>">
+              <button type="submit" class="manage-btn">Edit Category</button>
+        </form><br><br>
         <%
             ServiceDAO serviceDao = new ServiceDAO();
             List<Service> services = serviceDao.getServicesByCategory(categoryId);
@@ -153,9 +158,7 @@
             <a href="serviceDetails.jsp?serviceId=<%= service.getId() %>" class="service-link">
               <%= service.getName() %>
             </a>
-            <% if (isAdmin) { %>
-              <a href="updateService.jsp?serviceId=<%= service.getId() %>" class="manage-btn">Manage</a>
-            <% } %>
+            
           </div>
         <% } %>
 
@@ -173,9 +176,9 @@
               <textarea id="description" name="serviceDescription" rows="4" required></textarea><br>
 
               <label for="price">Price:</label>
-              <input type="number" id="price" name="servicePrice" step="0.01" required><br>
+              <input type="number" id="price" name="servicePrice" step="0.01" required><br><br>
 
-              <button type="submit">Add Service</button>
+              <button type="submit" class="manage-btn">Add Service</button>
             </form>
           </fieldset>
         <% } %>
