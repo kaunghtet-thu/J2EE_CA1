@@ -1,35 +1,44 @@
 package DAO;
 
 import DB.DatabaseUtil;
-import bean.Booking;
+import bean.BookingService;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BookingDAO {
 
-    // Create: Add a new booking
-    public boolean addBooking(Booking booking) {
-        String sql = "INSERT INTO booking (member_id, service_id, status_id, staff_id, booking_date, booking_time, cleaning_hour, booked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	// Create: Add a new booking
+    public int createBooking(int memberId, int statusId) {
+        String sql = "INSERT INTO booking (member_id, status_id, booked_at) VALUES (?, ?, ?)";
         try (Connection connection = DatabaseUtil.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
+             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setInt(1, booking.getMemberId());
-            stmt.setInt(2, booking.getServiceId());
-            stmt.setInt(3, booking.getStatusId());
-            stmt.setObject(4, booking.getStaffId(), Types.INTEGER); // Handle optional field
-            stmt.setDate(5, Date.valueOf(booking.getBookingDate()));
-            stmt.setTime(6, Time.valueOf(booking.getBookingTime()));
-            stmt.setInt(7, booking.getCleaningHour());
-            stmt.setTimestamp(8, Timestamp.valueOf(booking.getBookedAt()));
+            stmt.setInt(1, memberId);
+            stmt.setInt(2, statusId);
+            stmt.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
 
-            return stmt.executeUpdate() > 0;
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating booking failed, no rows affected.");
+            }
+            
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Creating booking failed, no generated key obtained.");
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
     }
+
     // Create: Add feedback to a booking
 
     public boolean addFeedback(int bookingId, int rating, String comments) {
@@ -74,64 +83,64 @@ public class BookingDAO {
 
 
     // Read: Get all bookings
-    public List<Booking> getAllBookings() {
-        List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM booking";
-
-        try (Connection connection = DatabaseUtil.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                Booking booking = new Booking(
-                        rs.getInt("id"),
-                        rs.getInt("member_id"),
-                        rs.getInt("service_id"),
-                        rs.getInt("status_id"),
-                        rs.getObject("staff_id", Integer.class),
-                        rs.getDate("booking_date").toLocalDate(),
-                        rs.getTime("booking_time").toLocalTime(),
-                        rs.getTimestamp("booked_at").toLocalDateTime()
-                );
-                bookings.add(booking);
-            }
-            return bookings;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+//    public List<BookingService> getAllBookings() {
+//        List<BookingService> bookings = new ArrayList<>();
+//        String sql = "SELECT * FROM booking";
+//
+//        try (Connection connection = DatabaseUtil.getConnection();
+//             PreparedStatement stmt = connection.prepareStatement(sql);
+//             ResultSet rs = stmt.executeQuery()) {
+//
+//            while (rs.next()) {
+//                BookingService booking = new BookingService(
+//                        rs.getInt("id"),
+//                        rs.getInt("member_id"),
+//                        rs.getInt("service_id"),
+//                        rs.getInt("status_id"),
+//                        rs.getObject("staff_id", Integer.class),
+//                        rs.getDate("booking_date").toLocalDate(),
+//                        rs.getTime("booking_time").toLocalTime(),
+//                        rs.getTimestamp("booked_at").toLocalDateTime()
+//                );
+//                bookings.add(booking);
+//            }
+//            return bookings;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
     
-    public List<Booking> getBookingsByMemberId(int memberId) {
-        List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM booking WHERE member_id = ?";
-
-        try (Connection connection = DatabaseUtil.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            // Set the parameter for member_id
-            stmt.setInt(1, memberId);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    bookings.add(new Booking(
-                            rs.getInt("id"),
-                            rs.getInt("member_id"),
-                            rs.getInt("service_id"),
-                            rs.getInt("status_id"),
-                            rs.getObject("staff_id", Integer.class),  // Handles null values
-                            rs.getDate("booking_date").toLocalDate(),
-                            rs.getTime("booking_time").toLocalTime(),
-                            rs.getTimestamp("booked_at").toLocalDateTime()));
-                }
-            }
-        } catch (SQLException e) {
-            // Log the exception (Optional)
-            System.err.println("Error while fetching bookings for member ID: " + memberId);
-            e.printStackTrace();
-        }
-        return bookings;
-    }
+//    public List<BookingService> getBookingsByMemberId(int memberId) {
+//        List<BookingService> bookings = new ArrayList<>();
+//        String sql = "SELECT * FROM booking WHERE member_id = ?";
+//
+//        try (Connection connection = DatabaseUtil.getConnection();
+//             PreparedStatement stmt = connection.prepareStatement(sql)) {
+//
+//            // Set the parameter for member_id
+//            stmt.setInt(1, memberId);
+//
+//            try (ResultSet rs = stmt.executeQuery()) {
+//                while (rs.next()) {
+//                    bookings.add(new BookingService(
+//                            rs.getInt("id"),
+//                            rs.getInt("member_id"),
+//                            rs.getInt("service_id"),
+//                            rs.getInt("status_id"),
+//                            rs.getObject("staff_id", Integer.class),  // Handles null values
+//                            rs.getDate("booking_date").toLocalDate(),
+//                            rs.getTime("booking_time").toLocalTime(),
+//                            rs.getTimestamp("booked_at").toLocalDateTime()));
+//                }
+//            }
+//        } catch (SQLException e) {
+//            // Log the exception (Optional)
+//            System.err.println("Error while fetching bookings for member ID: " + memberId);
+//            e.printStackTrace();
+//        }
+//        return bookings;
+//    }
 
 
 

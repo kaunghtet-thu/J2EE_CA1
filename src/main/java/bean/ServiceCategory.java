@@ -4,11 +4,12 @@ public class ServiceCategory {
 	
 	Integer id;
 	String name;
+	String image;
 	
-	public ServiceCategory(Integer id, String name) {
-		super();
+	public ServiceCategory(Integer id, String name, String image) {
 		this.id = id;
 		this.name = name;
+		this.image = image;
 	}
 
 	public Integer getId() {
@@ -18,5 +19,8 @@ public class ServiceCategory {
 	public String getName() {
 		return name;
 	}
-
+	
+	public String getImage() {
+		return image;
+	}
 }

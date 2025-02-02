@@ -489,4 +489,26 @@ public class MemberDAO {
 		return false;
 	}
 	
+	public Address getAddressById(int addressId) {
+        Address address = null;
+        String sql = "SELECT * FROM address WHERE id = ?";
+
+        try (Connection connection = DatabaseUtil.getConnection();
+		         PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, addressId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                String addressStr = rs.getString("address");
+                int memberId = rs.getInt("member_id");
+
+                address = new Address(id, addressStr, memberId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return address;
+    }
 }

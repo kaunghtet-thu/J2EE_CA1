@@ -17,7 +17,7 @@ import java.util.List;
 import DAO.BookingDAO;
 import DAO.FeedbackDAO;
 import DAO.StatusDAO;
-import bean.Booking;
+import bean.BookingService;
 
 /**
  * Servlet implementation class ManageBooking
