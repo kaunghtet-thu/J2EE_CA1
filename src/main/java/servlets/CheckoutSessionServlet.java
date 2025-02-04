@@ -22,8 +22,8 @@ public class CheckoutSessionServlet extends HttpServlet {
         // Build checkout session parameters
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:8080/J2EE_cleaning_service/public/generateReceipt") // Replace with your success URL
-                .setCancelUrl("http://localhost:8080/cancel")   // Replace with your cancel URL
+                .setSuccessUrl("http://localhost:8080/J2EE_cleaning_service/public/generateReceipt") 
+                .setCancelUrl("http://localhost:8080/public/bookings.jsp")   
                 .addLineItem(
                     SessionCreateParams.LineItem.builder()
                         .setQuantity(1L)
@@ -57,4 +57,10 @@ public class CheckoutSessionServlet extends HttpServlet {
             response.getWriter().write("Error: " + e.getMessage());
         }
     }
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doPost(request,response);
+	}
 }
+
+

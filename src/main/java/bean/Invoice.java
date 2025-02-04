@@ -1,21 +1,31 @@
 package bean;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
+
 
 public class Invoice {
 	private int bookingId;
 	private String customerName;
 	private LocalDateTime bookedAt;
-	private ArrayList<InvoiceItem> invoiceItem;
-	private double discount;
+	private List<InvoiceItem> invoiceItem;
+	private double discount = 1;
 
-	public Invoice(int bookingid, String customerName, LocalDateTime bookedAt, ArrayList<InvoiceItem> invoiceItem) {
+	public Invoice(int bookingid, String customerName, LocalDateTime bookedAt, List<InvoiceItem> invoiceItem) {
 		this.bookingId = bookingid;
 		this.customerName = customerName;
+		this.bookedAt = bookedAt;
 		this.invoiceItem = invoiceItem;
 	}
 
+	public Invoice(int bookingid, String customerName, LocalDateTime bookedAt, List<InvoiceItem> invoiceItem, double discount) {
+		this.bookingId = bookingid;
+		this.customerName = customerName;
+		this.bookedAt = bookedAt;
+		this.invoiceItem = invoiceItem;
+		this.discount = discount;
+	}
+	
 	public int getBookingid() {
 		return bookingId;
 	}
@@ -26,10 +36,13 @@ public class Invoice {
 	public LocalDateTime getBookedAt() {
 		return bookedAt;
 	}
-	public ArrayList<InvoiceItem> getInvoiceItem() {
+	public List<InvoiceItem> getInvoiceItem() {
 		return invoiceItem;
 	} 
 	public double getDiscount () {
 		return this.discount;
+	}
+	public String getDiscountString () {
+		return (int)(this.discount*100) +"% Off";
 	}
 }

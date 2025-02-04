@@ -7,6 +7,7 @@
 </head>
 <body>
 <%@include file="header.jsp" %>
+<% if (isMember) { %>
 
     <h1>Your Cart</h1>
     
@@ -77,6 +78,8 @@
 	    <button type="submit">Continue Shopping</button>
 	</form>
     <%@include file="footer.html" %>
-    
+  <%} else { %>  
+  	<p style="color: red; font-weight: bold; font-size: 16px; text-align: center;">Cart is for members only</p>
+  <%} %>
 </body>
 </html>

@@ -143,12 +143,12 @@
       <div class="category-card">
         <h3><%= categoryName %> Services</h3>
         <img src="images/<%= category.getImage() %>" alt="<%= category.getName() %>" width="100" height="100" /><br>
-        
+        <%if (isAdmin){ %>
 		<form action="updateCategory.jsp" method="post">
               <input type="hidden" name="categoryId" value="<%= categoryId %>">
               <button type="submit" class="manage-btn">Edit Category</button>
         </form><br><br>
-        <%
+        <%}
             ServiceDAO serviceDao = new ServiceDAO();
             List<Service> services = serviceDao.getServicesByCategory(categoryId);
 

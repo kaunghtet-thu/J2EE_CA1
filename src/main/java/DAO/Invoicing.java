@@ -3,17 +3,21 @@ package DAO;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import bean.Invoice;
 import bean.InvoiceItem;
+import bean.MerchandizeInvoiceItem;
+import bean.ServiceInvoiceItem;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import jakarta.activation.DataHandler;
 import jakarta.mail.util.ByteArrayDataSource;
 
 import java.io.*;
-import java.util.ArrayList;
+
+import java.util.List;
 import java.util.Properties;
 
 public class Invoicing {
@@ -38,7 +42,8 @@ public class Invoicing {
         document.add(new Paragraph("Customer Name: " + invoice.getCustomerName()));
         document.add(new Paragraph("Booked At: " + invoice.getBookedAt().toString()));
         document.add(new Paragraph("\n"));
-
+        
+        
         // Create a table for service details
      // Create a table with 4 columns
         Table serviceTable = new Table(new float[] { 4, 4, 3, 3, 2 })  // Added one more column of width 4
@@ -50,21 +55,62 @@ public class Invoicing {
         serviceTable.addCell("Service Date");
         serviceTable.addCell("Time Slot");
         serviceTable.addCell("Price");
+        
+        Table merchandizeTable = new Table(new float[] { 5, 2, 2, 2 }) // Column widths
+                .useAllAvailableWidth();
 
-        ArrayList<InvoiceItem> invoiceItems = invoice.getInvoiceItem();
+        // Add table headers
+        merchandizeTable.addCell("Product Name");
+        merchandizeTable.addCell("Unit Price");
+        merchandizeTable.addCell("Quantity");
+        merchandizeTable.addCell("Total Price");
+
+       
+
+        List<InvoiceItem> invoiceItems = invoice.getInvoiceItem();
         double totalprice = 0.0;
-
+        double serviceTotalPrice = 0.0;
+        double merchandizeTotalPrice = 0.0;
+        boolean hasServiceItems = false;
+        boolean hasMerchandizeItems = false;
+        
         for (InvoiceItem item : invoiceItems) {
-            serviceTable.addCell(item.getServiceName()); 
-            serviceTable.addCell(item.getAddress());     
-            serviceTable.addCell(item.getBookingDate().toString()); 
-            serviceTable.addCell(item.getBookingTime().toString()); 
-            serviceTable.addCell("$" + String.format("%.2f", item.getPrice())); 
-            totalprice += item.getPrice();
+         
+            if (item instanceof ServiceInvoiceItem) { // Check if it's a ServiceInvoiceItem
+                ServiceInvoiceItem serviceItem = (ServiceInvoiceItem) item; // Cast to subclass
+                serviceTable.addCell(serviceItem.getName()); 
+                serviceTable.addCell(serviceItem.getAddress());
+                serviceTable.addCell(serviceItem.getBookingDate().toString());
+                serviceTable.addCell(serviceItem.getBookingTime().toString());
+                serviceTable.addCell("$" + String.format("%.2f", serviceItem.getPrice())); 
+                serviceTotalPrice += serviceItem.getPrice();
+                totalprice += serviceItem.getPrice();
+                hasServiceItems = true;
+            } else  {
+            	MerchandizeInvoiceItem merchandizeItem = (MerchandizeInvoiceItem) item;
+            	merchandizeTable.addCell(merchandizeItem.getName());
+            	merchandizeTable.addCell("$" + String.format("%.2f", merchandizeItem.getUnitPrice()));
+            	merchandizeTable.addCell(String.format("%d", merchandizeItem.getQuantity()));
+            	merchandizeTable.addCell("$" + String.format("%.2f", merchandizeItem.getPrice()));
+            	merchandizeTotalPrice += merchandizeItem.getPrice();
+            	totalprice += merchandizeItem.getPrice();
+            	hasMerchandizeItems = true;
+            }
+          
         }
 
-        serviceTable.setFontSize(12);
-        document.add(serviceTable);
+        if (hasServiceItems) {
+        	document.add(new Paragraph("Services Taken"));
+            serviceTable.setFontSize(12);
+            document.add(serviceTable);
+        }
+
+        if (hasMerchandizeItems) {
+        	document.add(new Paragraph("\n"));
+        	document.add(new Paragraph("Merchandize Purchased"));
+            merchandizeTable.setFontSize(12);
+            document.add(merchandizeTable);
+        }
 
         document.add(new Paragraph("\n"));
 
@@ -72,15 +118,37 @@ public class Invoicing {
         double discountAmount=0;
         if (invoice.getDiscount() < 1) {
         	 discountAmount = totalprice * invoice.getDiscount();
+        	 totalprice -= discountAmount;
         } 
-       
-        document.add(new Paragraph("Original Price: $" + String.format("%.2f", totalprice)).setFontSize(12));
-        document.add(new Paragraph("GST 9%: $" + String.format("%.2f", gstAmount)).setFontSize(12));
         
-        double grandTotal = totalprice - discountAmount + gstAmount;  
-        document.add(new Paragraph("Grand Total: $" + String.format("%.2f", grandTotal)).setFontSize(14));
+        Table summary = new Table(new float[] { 2, 2 });
+        
+        
+        summary.useAllAvailableWidth();
 
+     // Add key-value pairs
+     summary.addCell(new Cell().add(new Paragraph("Service Total:")));
+     summary.addCell(new Cell().add(new Paragraph("$" + String.format("%.2f", serviceTotalPrice))));
 
+     summary.addCell(new Cell().add(new Paragraph("Merchandize Total:")));
+     summary.addCell(new Cell().add(new Paragraph("$" + String.format("%.2f", merchandizeTotalPrice))));
+
+     summary.addCell(new Cell().add(new Paragraph("Original Price:")));
+     summary.addCell(new Cell().add(new Paragraph("$" + String.format("%.2f", totalprice))));
+
+     summary.addCell(new Cell().add(new Paragraph("GST (9%):")));
+     summary.addCell(new Cell().add(new Paragraph("$" + String.format("%.2f", gstAmount))));
+     
+     if(invoice.getDiscount()<1) {
+     summary.addCell(new Cell().add(new Paragraph(invoice.getDiscountString() +" Discount:")));
+     summary.addCell(new Cell().add(new Paragraph("$" + String.format("%.2f", discountAmount))));
+     }
+     
+     summary.addCell(new Cell().add(new Paragraph("Grand Total:")));
+     summary.addCell(new Cell().add(new Paragraph("$" + String.format("%.2f", totalprice))).setFontSize(14));
+
+     // Add the summary table to the document
+     document.add(summary);
         // Add auto-generated invoice disclaimer
         document.add(new Paragraph("\n"));
         document.add(new Paragraph("This is an auto-generated invoice, no need for signature.").setFontSize(10));

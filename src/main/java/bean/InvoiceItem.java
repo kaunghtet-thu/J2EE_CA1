@@ -1,37 +1,17 @@
 package bean;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-public class InvoiceItem {
-	private String serviceName;
-	private String address;
-    private LocalDate bookingDate;
-    private LocalTime bookingTime;
-	private double price;
+public abstract class InvoiceItem {
+	String name;
+	double price;
 	
-	public InvoiceItem(String serviceName, String address, LocalDate bookingDate, LocalTime bookingTime, double price) {
-		this.serviceName = serviceName;
-		this.address = address;
-		this.bookingDate = bookingDate;
-		this.bookingTime = bookingTime;
+	public InvoiceItem(String name, double price) {
+		this.name = name;
 		this.price = price;
 	}
-	public String getServiceName() {
-		return serviceName;
+
+	public String getName() {
+		return name;
 	}
-	public String getAddress() {
-		return address;
-	}
-	public LocalDate getBookingDate() {
-		return bookingDate;
-	}
-	public LocalTime getBookingTime() {
-		return bookingTime;
-	}
-	public double getPrice() {
-		return price;
-	}
-	
+	public abstract double getPrice();
 	
 }

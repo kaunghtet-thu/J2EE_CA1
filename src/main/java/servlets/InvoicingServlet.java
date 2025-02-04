@@ -10,9 +10,12 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import DAO.Invoicing;
 import bean.Invoice;
+import bean.MerchandizeInvoiceItem;
+import bean.ServiceInvoiceItem;
 import bean.InvoiceItem;
 
 @WebServlet("/public/generateReceipt")
@@ -23,19 +26,26 @@ public class InvoicingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	HttpSession session = request.getSession();
-    	Invoice invoice = (Invoice) session.getAttribute("invoice");
+//    	Invoice invoice = (Invoice) session.getAttribute("invoice");
+  
+    	ServiceInvoiceItem item1 = new ServiceInvoiceItem("Plumbing Service", "123 Main St, Singapore", LocalDate.of(2024, 2, 3), LocalTime.of(14, 30), 150.75);
+    	ServiceInvoiceItem item2 = new ServiceInvoiceItem("Electrical Repair", "456 Orchard Rd, Singapore", LocalDate.of(2024, 2, 10), LocalTime.of(10, 15), 200.50);
+    	ServiceInvoiceItem item3 = new ServiceInvoiceItem("House Cleaning", "789 Marina Bay, Singapore", LocalDate.of(2024, 2, 15), LocalTime.of(9, 0), 120.00);
+    	List<InvoiceItem> items= new ArrayList<InvoiceItem>();
+    	items.add(item1);
+    	items.add(item2);
+    	items.add(item3);
+    	MerchandizeInvoiceItem item4 = new MerchandizeInvoiceItem("Air Fresher", 10.0, 3);
+    	items.add(item4);
+    	Invoice invoice = new Invoice(101, "John Doe", LocalDateTime.of(2024, 2, 1, 12, 0), items);
+    	
+    	
 
     	try {
-            // Create a single invoice with sample data
-//       	ArrayList <InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>
-//        	invoiceItems.add(null); 
-//        	Invoice invoice = new Invoice(1, "John Doe", LocalDateTime.of(2025, 1, 25, 14, 30), "Cleaning Service",
-//                    LocalDate.of(2025, 1, 25), LocalTime.of(14, 30), 99.99);
-
-            // Generate the PDF receipt for the single invoice (now as byte array)
             byte[] pdfBytes = bookingReceiptService.generatePdfReceipt(invoice);
 
             // Send the email with the PDF attachment
+//            String recipientEmail = "b660360@gmail.com";
             String recipientEmail = "kaunghsetaung8@gmail.com";
             String subject = "Your Booking Receipt";
             String body = "Thank you for your booking. Please find your receipt attached.\n\n" +
@@ -51,4 +61,9 @@ public class InvoicingServlet extends HttpServlet {
             response.getWriter().write("An error occurred: " + e.getMessage());
         }
     }
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doPost(request,response);
+	}
 }

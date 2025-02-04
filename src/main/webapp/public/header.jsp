@@ -40,10 +40,10 @@
         <% }if (isMember){
         %>	       
         <li><a href="cart.jsp">Cart</a></li>
-         <li><a href="bookings.jsp">Booking History</a></li>
+        <li><a href="bookings.jsp">Booking History</a></li>
+        <li><a href="applyForStaff.jsp">Career Opportunities</a></li>
         <% } %>
-        <% if (isAdmin){
-        %>	
+        <% if (isAdmin){ %>	
         <li><a href="displayAllMembers.jsp">Members</a></li>
         <li><a href="feedback.jsp">Feedback History</a></li>
         <% } %>
